@@ -39,15 +39,38 @@ MacOSVersion = "14.5"
 
 Dependencies =
 {
-	-- TODO: Library in format
-	--Library =
-	--{
-	--	LibName = "Library",
-	--	IncludeDir = "%{wks.location}/vendor/Library/Library/include",
-	--	-- Optional: LibDir  = ""
-	--}
+	GameNetworkingSockets =
+	{
+		LibName = "GameNetworkingSockets",
+		IncludeDirs = { 
+			"%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/include", 
+			"%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src", 
+			"%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/public", 
+		},
+	}
 }
 
+function nn_include_dependencies()
+	for name, dep in pairs(Dependencies) do
+		if dep.IncludeDir then
+			includedirs { dep.IncludeDir }
+		end
+		if dep.IncludeDirs then
+			includedirs { dep.IncludeDirs }
+		end
+	end
+end
+
+function nn_link_dependencies()
+	for name, dep in pairs(Dependencies) do
+		if dep.LibDir then
+			libdirs { dep.LibDir }
+		end
+		if dep.LibName then
+			links { dep.LibName }
+		end
+	end
+end
 ------------------------------------------------------------------------------
 -- Solution
 ------------------------------------------------------------------------------
@@ -70,7 +93,7 @@ workspace "NanoNetworking"
 	}
 
 group "Dependencies"
-	-- include "vendor/Library"
+	include "vendor/GameNetworkingSockets"
 group ""
 
 group "NanoNetworking"

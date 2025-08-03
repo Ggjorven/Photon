@@ -8,17 +8,23 @@
     cd NanoNetworking
     ```
 
-2. Navigate to the scripts folder:
+2. (Optional) If you haven't already, install dependencies (using [vcpkg](https://github.com/microsoft/vcpkg)): -- TODO: Manual install [instructions](https://github.com/ValveSoftware/GameNetworkingSockets/blob/master/BUILDING_WINDOWS_MANUAL.md)
+    ```sh
+    vcpkg install openssl
+    vcpkg install protobuf
+    ```
+
+3. Navigate to the scripts folder:
     ```sh
     cd scripts/windows
     ```
 
-3. (Optional) If you haven't already installed the premake5 build system you can install it like this:
+4. (Optional) If you haven't already installed the premake5 build system you can install it like this:
     ```sh
     ./install-premake5.bat
     ```
 
-4. Choose what you want it build to:
+5. Choose what you want it build to:
     - Visual Studio 17 2022:
         ```sh
         ./gen-vs2022.bat
@@ -36,18 +42,32 @@
     cd NanoNetworking
     ```
 
-2. Navigate to the scripts folder:
+2. (Optional) If you haven't already, install dependencies:
+    - Ubuntu/debian:
+        ```sh
+        apt install libssl-dev
+        apt install libprotobuf-dev protobuf-compiler
+        ```
+
+    or
+    - Arch Linux:
+        ```sh
+        pacman -S openssl
+        pacman -S protobuf
+        ```
+
+3. Navigate to the scripts folder:
     ```sh
     cd scripts/linux
     ```
 
-3. (Optional) If you haven't already installed the premake5 build system you can install it like this:
+4. (Optional) If you haven't already installed the premake5 build system you can install it like this:
     ```sh
     chmod +x install-premake5.sh
     ./install-premake5.sh
     ```
 
-4. Generate make files:
+5. Generate make files:
     ```sh
     chmod +x gen-make-%compiler%.sh
     ./gen-make-%compiler%.sh
@@ -61,18 +81,24 @@
     cd NanoNetworking
     ```
 
-2. Navigate to the scripts folder:
+2. (Optional) If you haven't already, install dependencies (using [Homebrew](https://brew.sh/)):
+    ```sh
+    brew install openssl
+    brew install protobuf
+    ```
+
+3. Navigate to the scripts folder:
     ```sh
     cd scripts/macos
     ```
 
-3. (Optional) If you haven't already installed the premake5 build system you can install it like this:
+4. (Optional) If you haven't already installed the premake5 build system you can install it like this:
     ```sh
     chmod +x install-premake5.sh
     ./install-premake5.sh
     ```
 
-4. Generate make files:
+5. Generate make files:
     ```sh
     chmod +x gen-xcode.sh
     ./gen-xcode.sh

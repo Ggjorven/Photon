@@ -41,6 +41,8 @@ project "Sandbox"
 		"NanoNetworking",
 	}
 
+	nn_include_dependencies()
+
 	filter "system:windows"
 		defines "NN_PLATFORM_DESKTOP"
 		defines "NN_PLATFORM_WINDOWS"
@@ -58,6 +60,8 @@ project "Sandbox"
 		defines "NN_PLATFORM_UNIX"
 		systemversion "latest"
 		staticruntime "on"
+
+		nn_link_dependencies()
 
     filter "system:macosx"
 		defines "NN_PLATFORM_DESKTOP"

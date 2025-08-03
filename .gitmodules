@@ -1,0 +1,3 @@
+[submodule "vendor/GameNetworkingSockets/GameNetworkingSockets"]
+	path = vendor/GameNetworkingSockets/GameNetworkingSockets
+	url = https://github.com/ValveSoftware/GameNetworkingSockets

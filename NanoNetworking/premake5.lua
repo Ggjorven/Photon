@@ -35,16 +35,10 @@ project "NanoNetworking"
 	{
 		"src",
 		"src/NanoNetworking",
-
-		-- TODO: Include dependencies
-		-- "%{Dependencies.Library.IncludeDir}",
 	}
 
-	links
-	{
-		-- TODO: Link libraries
-		-- "%{Dependencies.Library.LibName}",
-	}
+	nn_include_dependencies()
+	nn_link_dependencies()
 
 	filter "system:windows"
 		defines "NN_PLATFORM_DESKTOP"
