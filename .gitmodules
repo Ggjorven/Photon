@@ -1,3 +1,6 @@
 [submodule "vendor/GameNetworkingSockets/GameNetworkingSockets"]
 	path = vendor/GameNetworkingSockets/GameNetworkingSockets
 	url = https://github.com/ValveSoftware/GameNetworkingSockets
+[submodule "vendor/protobuf/protobuf"]
+	path = vendor/protobuf/protobuf
+	url = https://github.com/protocolbuffers/protobuf

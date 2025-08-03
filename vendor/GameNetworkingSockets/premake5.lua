@@ -1,6 +1,7 @@
 MacOSVersion = MacOSVersion or "14.5"
 
 project "GameNetworkingSockets"
+	dependson "protoc"
 	kind "StaticLib"
 	language "C++"
 	cppdialect "C++17"
@@ -17,31 +18,77 @@ project "GameNetworkingSockets"
 		"GameNetworkingSockets/src/**.cpp",
 	}
 
+	removefiles 
+	{
+		"GameNetworkingSockets/src/external/**",
+	}
+
+	removefiles -- Note: We use OpenSSL
+	{
+		-- LibSodium
+		"GameNetworkingSockets/src/common/crypto_libsodium.cpp",
+		"GameNetworkingSockets/src/common/crypto_25519_libsodium.cpp",
+
+		"GameNetworkingSockets/src/common/crypto_sha1_wpa.cpp",
+		"GameNetworkingSockets/src/external/sha1-wpa/sha1-internal.c",
+		"GameNetworkingSockets/src/external/sha1-wpa/sha1.c",
+
+		-- BCrypt
+		"GameNetworkingSockets/src/common/crypto_bcrypt.cpp",
+
+		"GameNetworkingSockets/src/common/crypto_25519_donna.cpp",
+		"GameNetworkingSockets/src/external/curve25519-donna/curve25519.c",
+		"GameNetworkingSockets/src/external/curve25519-donna/curve25519_VALVE_sse2.c",
+		"GameNetworkingSockets/src/external/ed25519-donna/ed25519_VALVE.c",
+		"GameNetworkingSockets/src/external/ed25519-donna/ed25519_VALVE_sse2.c"
+	}
+
 	includedirs
     {
 		"GameNetworkingSockets/src",
 		"GameNetworkingSockets/src/public",
+		"GameNetworkingSockets/src/common",
+		
         "GameNetworkingSockets/include",
 
 		"GameNetworkingSockets/src/external",
+		"GameNetworkingSockets/src/external/abseil",
+		"GameNetworkingSockets/src/external/webrtc",
+
+		"%{Dependencies.OpenSSL.IncludeDir}",
+		"%{Dependencies.ProtoBuf.IncludeDir}",
     }
 
 	defines
 	{
 		"_CRT_SECURE_NO_WARNINGS",
+
+		"VALVE_CRYPTO_ENABLE_25519" 
 	}
 
 	filter "system:windows"
 		systemversion "latest"
 		staticruntime "On"
 
+		includedirs("%{wks.location}/vendor/OpenSSL/windows/include")
+		defines("WEBRTC_WIN")
+
+		defines 
+		{
+			"NOMINMAX",
+		}
+		
 	filter "system:linux"
 		systemversion "latest"
 		staticruntime "On"
 
+		defines("WEBRTC_POSIX")
+
 	filter "system:macosx"
 		systemversion(MacOSVersion)
 		staticruntime "On"
+
+		defines("WEBRTC_MAC")
 
 	filter "action:xcode*"
 		-- Note: If we don't add the header files to the externalincludedirs

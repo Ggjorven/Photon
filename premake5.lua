@@ -47,7 +47,14 @@ Dependencies =
 			"%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src", 
 			"%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/public", 
 		},
-	}
+	},
+
+	OpenSSL = {},
+	ProtoBuf = 
+	{
+		IncludeDir = "%{wks.location}/vendor/protobuf/protobuf/src/google",
+		LibName = "protobuf"
+	},
 }
 
 function nn_include_dependencies()
@@ -66,11 +73,31 @@ function nn_link_dependencies()
 		if dep.LibDir then
 			libdirs { dep.LibDir }
 		end
+		if dep.LibDirs then
+			libdirs { dep.LibDirs }
+		end
 		if dep.LibName then
 			links { dep.LibName }
 		end
+		if dep.LibNames then
+			links { dep.LibNames }
+		end
 	end
 end
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+-- Platform specific
+------------------------------------------------------------------------------
+if os.target() == "windows" then
+	Dependencies.OpenSSL = 
+	{
+		IncludeDir = "%{wks.location}/vendor/OpenSSL/windows/include",
+		-- TODO: Linking
+	}
+end
+------------------------------------------------------------------------------
+
 ------------------------------------------------------------------------------
 -- Solution
 ------------------------------------------------------------------------------
@@ -94,6 +121,7 @@ workspace "NanoNetworking"
 
 group "Dependencies"
 	include "vendor/GameNetworkingSockets"
+	include "vendor/protobuf"
 group ""
 
 group "NanoNetworking"
