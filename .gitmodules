@@ -4,3 +4,6 @@
 [submodule "vendor/protobuf/protobuf"]
 	path = vendor/protobuf/protobuf
 	url = https://github.com/protocolbuffers/protobuf
+[submodule "vendor/abseil/abseil"]
+	path = vendor/abseil/abseil
+	url = https://github.com/abseil/abseil-cpp.git

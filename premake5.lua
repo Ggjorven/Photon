@@ -55,6 +55,11 @@ Dependencies =
 		IncludeDir = "%{wks.location}/vendor/protobuf/protobuf/src/google",
 		LibName = "protobuf"
 	},
+	Abseil = 
+	{
+		IncludeDir = "%{wks.location}/vendor/abseil/abseil",
+		LibName = "abseil"
+	},
 }
 
 function nn_include_dependencies()
@@ -122,6 +127,7 @@ workspace "NanoNetworking"
 group "Dependencies"
 	include "vendor/GameNetworkingSockets"
 	include "vendor/protobuf"
+	include "vendor/abseil"
 group ""
 
 group "NanoNetworking"

@@ -10,37 +10,32 @@ project "protobuf"
 	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
 
-	prebuildcommands
-	{
-		-- Note: This is ugly, but GameNetworkingSockets includes abseil
-		'{COPYFILE} "%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/external/abseil/absl/base/internal/prefetch.h" "%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/external/abseil/absl/base"'
-	}
-
 	files
 	{
         "protobuf/src/google/protobuf/**.h",
 		"protobuf/src/google/protobuf/**.cc",
 
-		-- Note: This is ugly, but GameNetworkingSockets includes abseil
-		"%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/external/abseil/absl/**.h",
-		"%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/external/abseil/absl/**.cc",
+		-- "protobuf/third_party/utf8_range/**.h",
+		-- "protobuf/third_party/utf8_range/**.c",
+		-- "protobuf/third_party/utf8_range/**.cc",
+		-- "protobuf/third_party/utf8_range/**.cpp",
+
+		"protobuf/third_party/utf8_range/utf8_range.h",
+		"protobuf/third_party/utf8_range/utf8_range.c",
 	}
 
 	removefiles
 	{
+		"protobuf/src/google/protobuf/compiler/**",
+		"protobuf/src/google/protobuf/testing/**",
+		"protobuf/src/google/protobuf/util/python/**",
+
 		"protobuf/src/**/**test**.*",
+		"protobuf/src/**/**benchmark**.*",
+		"protobuf/src/**/mock_code_generator.cc",
 
-		-- Note: This is ugly, but GameNetworkingSockets includes abseil
-		"%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/external/abseil/absl/**/**test**.h",
-		"%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/external/abseil/absl/**/**test**.cc",
-
-		"%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/external/abseil/absl/**/**benchmark**.h",
-		"%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/external/abseil/absl/**/**benchmark**.cc",
-
-		"%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/external/abseil/absl/base/internal/**",
-		"%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/external/abseil/absl/base/internal/**",
-
-		"%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/external/abseil/absl/**/scoped_mock_log.cc",
+		-- "protobuf/third_party/utf8_range/**/**main**.*",
+		-- "protobuf/third_party/utf8_range/**/**test**.*",
 	}
 
 	includedirs
@@ -48,9 +43,15 @@ project "protobuf"
 		"protobuf/src",
 		"protobuf/src/google",
 
-		-- Note: This is ugly, but GameNetworkingSockets includes abseil
-		"%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/external/abseil"
+		"protobuf/third_party/utf8_range",
+
+		"%{Dependencies.Abseil.IncludeDir}"
     }
+
+	links
+	{
+		"%{Dependencies.Abseil.LibName}"
+	}
 
 	defines
 	{
