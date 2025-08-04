@@ -30,6 +30,7 @@ project "protobuf"
 		"protobuf/src/google/protobuf/testing/**",
 		"protobuf/src/google/protobuf/util/python/**",
 
+		"protobuf/src/**/**main**.*",
 		"protobuf/src/**/**test**.*",
 		"protobuf/src/**/**benchmark**.*",
 		"protobuf/src/**/mock_code_generator.cc",
@@ -105,19 +106,64 @@ project "protoc"
 
 	files
 	{
-		"GameNetworkingSockets/src/**.h",
-		"GameNetworkingSockets/src/**.hpp",
-		"GameNetworkingSockets/src/**.cpp",
+		-- "protobuf/src/google/protobuf/compiler/main.cc",
+		-- "protobuf/src/google/protobuf/compiler/code_generator.cc",
+		-- "protobuf/src/google/protobuf/compiler/code_generator_lite.cc",
+		-- "protobuf/src/google/protobuf/compiler/command_line_interface.cc",
+		
+		"protobuf/src/google/protobuf/compiler/*.*",
+		"protobuf/src/google/protobuf/compiler/cpp/**",
+
+		-- "protobuf/src/google/protobuf/compiler/subprocess.cc",
+		-- "protobuf/src/google/protobuf/compiler/zip_writer.cc",
+		-- "protobuf/upb_generator/common.cc",
+		-- "protobuf/upb_generator/common/names.cc",
+		-- "protobuf/upb_generator/file_layout.cc",
+		-- "protobuf/upb_generator/minitable/names.cc",
+		-- "protobuf/upb_generator/minitable/names_internal.cc",
+		-- "protobuf/upb_generator/plugin.cc",
+	}
+
+	removefiles
+	{
+		"protobuf/src/**/**main**.*",
+		"protobuf/src/**/**test**.*",
+		"protobuf/src/**/**benchmark**.*",
+
+		"protobuf/src/google/protobuf/compiler/fake_plugin.cc",
+		"protobuf/src/google/protobuf/compiler/mock_code_generator.cc",
+		"protobuf/src/google/protobuf/compiler/cpp/tools/analyze_profile_proto.cc",
+		"protobuf/src/google/protobuf/compiler/cpp/tools/analyze_profile_proto_main.cc",
+	}
+
+	files
+	{
+		--"protobuf/src/google/protobuf/compiler/main.cc",
+		"protobuf/src/google/protobuf/compiler/cpp/main.cc",
 	}
 
 	includedirs
     {
-		"GameNetworkingSockets/src",
+		"protobuf",
+		"protobuf/src",
+		"protobuf/src/google",
+
+		"protobuf/upb_generator",
+		"protobuf/third_party/utf8_range",
+
+		"%{Dependencies.Abseil.IncludeDir}"
     }
+
+	links
+	{
+		"%{Dependencies.ProtoBuf.LibName}", -- Includes Abseil
+	}
 
 	defines
 	{
 		"_CRT_SECURE_NO_WARNINGS",
+
+		"UPB_BOOTSTRAP_STAGE=0"
 	}
 
 	filter "system:windows"

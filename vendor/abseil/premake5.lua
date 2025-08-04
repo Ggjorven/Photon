@@ -24,8 +24,8 @@ project "abseil"
 		"abseil/absl/**/**benchmark**.h",
 		"abseil/absl/**/**benchmark**.cc",
 
-		"abseil/absl/base/internal/**",
-		"abseil/absl/base/internal/**",
+		-- "abseil/absl/base/internal/**",
+		-- "abseil/absl/base/internal/**",
 
 		"abseil/absl/**/scoped_mock_log.cc",
 		"abseil/absl/**/status_matchers.cc",
