@@ -52,7 +52,7 @@ Dependencies =
 	OpenSSL = {},
 	ProtoBuf = 
 	{
-		IncludeDir = "%{wks.location}/vendor/protobuf/protobuf/src/google",
+		IncludeDir = "%{wks.location}/vendor/protobuf/protobuf/src",
 		LibName = "protobuf"
 	},
 	Abseil = 

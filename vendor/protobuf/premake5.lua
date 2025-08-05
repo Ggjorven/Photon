@@ -122,6 +122,8 @@ project "protoc"
 		-- "protobuf/upb_generator/minitable/names.cc",
 		-- "protobuf/upb_generator/minitable/names_internal.cc",
 		-- "protobuf/upb_generator/plugin.cc",
+
+		"protoc-main.cpp",
 	}
 
 	removefiles
@@ -134,12 +136,6 @@ project "protoc"
 		"protobuf/src/google/protobuf/compiler/mock_code_generator.cc",
 		"protobuf/src/google/protobuf/compiler/cpp/tools/analyze_profile_proto.cc",
 		"protobuf/src/google/protobuf/compiler/cpp/tools/analyze_profile_proto_main.cc",
-	}
-
-	files
-	{
-		--"protobuf/src/google/protobuf/compiler/main.cc",
-		"protobuf/src/google/protobuf/compiler/cpp/main.cc",
 	}
 
 	includedirs

@@ -52,18 +52,27 @@ project "GameNetworkingSockets"
         "GameNetworkingSockets/include",
 
 		"GameNetworkingSockets/src/external",
-		"GameNetworkingSockets/src/external/abseil",
 		"GameNetworkingSockets/src/external/webrtc",
+		"GameNetworkingSockets/src/external/picojson",
 
 		"%{Dependencies.OpenSSL.IncludeDir}",
 		"%{Dependencies.ProtoBuf.IncludeDir}",
+		"%{Dependencies.ProtoBuf.IncludeDir}/../third_party/utf8_range",
+		"%{Dependencies.Abseil.IncludeDir}",
     }
 
 	defines
 	{
 		"_CRT_SECURE_NO_WARNINGS",
 
-		"VALVE_CRYPTO_ENABLE_25519" 
+		"VALVE_CRYPTO_ENABLE_25519",
+		"STEAMNETWORKINGSOCKETS_STATIC_LINK",
+		-- "STEAMNETWORKINGSOCKETS_LIBRARY"
+	}
+
+	links
+	{
+		"%{Dependencies.ProtoBuf.LibName}"
 	}
 
 	filter "system:windows"
@@ -76,6 +85,7 @@ project "GameNetworkingSockets"
 		defines 
 		{
 			"NOMINMAX",
+			"_WINDOWS"
 		}
 		
 	filter "system:linux"
