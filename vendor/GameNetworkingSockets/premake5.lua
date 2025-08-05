@@ -27,7 +27,12 @@ project "GameNetworkingSockets"
 		"GameNetworkingSockets/src/**.cc",
 		"GameNetworkingSockets/src/**.cpp",
 
-		-- TODO: Add proto generated cc files?
+		"GameNetworkingSockets/src/common/steamnetworkingsockets_messages.pb.h",
+		"GameNetworkingSockets/src/common/steamnetworkingsockets_messages.pb.cc",
+		"GameNetworkingSockets/src/common/steamnetworkingsockets_messages_certs.pb.h",
+		"GameNetworkingSockets/src/common/steamnetworkingsockets_messages_certs.pb.cc",
+		"GameNetworkingSockets/src/common/steamnetworkingsockets_messages_udp.pb.h",
+		"GameNetworkingSockets/src/common/steamnetworkingsockets_messages_udp.pb.cc",
 	}
 
 	removefiles 

@@ -56,8 +56,8 @@ project "Sandbox"
 
 		postbuildcommands
 		{
-			'{COPYFILE} "%{Dependencies.OpenSSL.DllName}" "%{cfg.targetdir}"',
-			'{COPYFILE} "%{Dependencies.OpenSSL.DllName}" "%{prj.location}"' -- Note: This is the debugdir
+			'{COPYFILE} "%{Dependencies.OpenSSL.IncludeDir}/../bin/%{Dependencies.OpenSSL.DllName}" "%{cfg.targetdir}"',
+			'{COPYFILE} "%{Dependencies.OpenSSL.IncludeDir}/../bin/%{Dependencies.OpenSSL.DllName}" "%{prj.location}"' -- Note: This is the debugdir
 		}
 
 	filter "system:linux"

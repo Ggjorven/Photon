@@ -53,3 +53,5 @@ DS_Store
 **/.cache
 compile_commands.json
 
+# Custom
+Sandbox/libcrypto-3-x64.dll
