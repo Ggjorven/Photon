@@ -61,7 +61,10 @@ project "Sandbox"
 		systemversion "latest"
 		staticruntime "on"
 
-		nn_link_dependencies()
+		links
+		{
+			"%{Dependencies.GameNetworkingSockets.LibName}"
+		}
 
     filter "system:macosx"
 		defines "NN_PLATFORM_DESKTOP"

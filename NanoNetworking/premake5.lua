@@ -28,7 +28,8 @@ project "NanoNetworking"
 	defines
 	{
 		"_CRT_SECURE_NO_WARNINGS",
-		"_SILENCE_ALL_MS_EXT_DEPRECATION_WARNINGS"
+		"_SILENCE_ALL_MS_EXT_DEPRECATION_WARNINGS",
+		"_WINSOCK_DEPRECATED_NO_WARNINGS"
 	}
 
 	includedirs
@@ -38,7 +39,11 @@ project "NanoNetworking"
 	}
 
 	nn_include_dependencies()
-	nn_link_dependencies()
+
+	links
+	{
+		"%{Dependencies.GameNetworkingSockets.LibName}"
+	}
 
 	filter "system:windows"
 		defines "NN_PLATFORM_DESKTOP"
@@ -51,6 +56,11 @@ project "NanoNetworking"
         {
             "NOMINMAX"
         }
+
+		links
+		{
+			"ws2_32.lib"
+		}
 
 	filter "system:linux"
 		defines "NN_PLATFORM_DESKTOP"

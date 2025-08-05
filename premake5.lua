@@ -72,23 +72,6 @@ function nn_include_dependencies()
 		end
 	end
 end
-
-function nn_link_dependencies()
-	for name, dep in pairs(Dependencies) do
-		if dep.LibDir then
-			libdirs { dep.LibDir }
-		end
-		if dep.LibDirs then
-			libdirs { dep.LibDirs }
-		end
-		if dep.LibName then
-			links { dep.LibName }
-		end
-		if dep.LibNames then
-			links { dep.LibNames }
-		end
-	end
-end
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------

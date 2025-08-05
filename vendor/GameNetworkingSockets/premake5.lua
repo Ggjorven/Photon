@@ -11,11 +11,23 @@ project "GameNetworkingSockets"
 	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
 
+	prebuildcommands
+	{
+		-- targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
+		'%{wks.location}/bin/' .. outputdir .. '/protoc/protoc' .. ' --proto_path=%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/common' .. ' --cpp_out=%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/common' .. ' %{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/common/steamnetworkingsockets_messages.proto',
+		'%{wks.location}/bin/' .. outputdir .. '/protoc/protoc' .. ' --proto_path=%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/common' .. ' --cpp_out=%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/common' .. ' %{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/common/steamnetworkingsockets_messages_udp.proto',
+		'%{wks.location}/bin/' .. outputdir .. '/protoc/protoc' .. ' --proto_path=%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/common' .. ' --cpp_out=%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/common' .. ' %{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/common/steamnetworkingsockets_messages_certs.proto',
+	}
+
 	files
 	{
 		"GameNetworkingSockets/src/**.h",
 		"GameNetworkingSockets/src/**.hpp",
+		"GameNetworkingSockets/src/**.c",
+		"GameNetworkingSockets/src/**.cc",
 		"GameNetworkingSockets/src/**.cpp",
+
+		-- TODO: Add proto generated cc files?
 	}
 
 	removefiles 
@@ -87,7 +99,7 @@ project "GameNetworkingSockets"
 			"NOMINMAX",
 			"_WINDOWS"
 		}
-		
+
 	filter "system:linux"
 		systemversion "latest"
 		staticruntime "On"
