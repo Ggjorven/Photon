@@ -62,6 +62,9 @@ project "NanoNetworking"
 			"ws2_32.lib"
 		}
 
+		libdirs("%{Dependencies.OpenSSL.LibDir}")
+		links(Dependencies.OpenSSL.LibNames)
+
 	filter "system:linux"
 		defines "NN_PLATFORM_DESKTOP"
 		defines "NN_PLATFORM_LINUX"

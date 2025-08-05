@@ -54,6 +54,12 @@ project "Sandbox"
             "NOMINMAX"
         }
 
+		postbuildcommands
+		{
+			'{COPYFILE} "%{Dependencies.OpenSSL.DllName}" "%{cfg.targetdir}"',
+			'{COPYFILE} "%{Dependencies.OpenSSL.DllName}" "%{prj.location}"' -- Note: This is the debugdir
+		}
+
 	filter "system:linux"
 		defines "NN_PLATFORM_DESKTOP"
 		defines "NN_PLATFORM_LINUX"

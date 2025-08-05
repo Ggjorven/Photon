@@ -81,7 +81,12 @@ if os.target() == "windows" then
 	Dependencies.OpenSSL = 
 	{
 		IncludeDir = "%{wks.location}/vendor/OpenSSL/windows/include",
-		-- TODO: Linking
+		LibNames = {
+			"libcrypto",
+			"libssl"
+		},
+		DllName = "libcrypto-3-x64.dll",
+		LibDir = "%{wks.location}/vendor/OpenSSL/windows/lib",
 	}
 end
 ------------------------------------------------------------------------------
