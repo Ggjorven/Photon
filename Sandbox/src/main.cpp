@@ -14,10 +14,6 @@
 #include <steam/steamnetworkingsockets.h>
 #include <steam/isteamnetworkingutils.h>
 
-#ifndef STEAMNETWORKINGSOCKETS_OPENSOURCE
-	#include <steam/steam_api.h>
-#endif
-
 #if defined(NN_PLATFORM_WINDOWS)
 	#include <WinSock2.h>
 	#include <ws2tcpip.h>
