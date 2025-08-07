@@ -1,315 +1,9 @@
-// Note: So far all of this code has been stolen from TheCherno/Walnut to test out the functionality of GameNetworkingSockets
+#include "NanoNetworking/Core/Core.hpp"
+#include "NanoNetworking/Core/Utils.hpp"
 
-#include <iostream>
-#include <string>
-#include <vector>
-#include <map>
-#include <thread>
-#include <functional>
-#include <memory>
-#include <format>
-#include <string.h>
+#include "NanoNetworking/Client/Client.hpp"
 
-#define STEAMNETWORKINGSOCKETS_STATIC_LINK
-#include <steam/steamnetworkingsockets.h>
-#include <steam/isteamnetworkingutils.h>
-
-#if defined(NN_PLATFORM_WINDOWS)
-	#include <WinSock2.h>
-	#include <ws2tcpip.h>
-#else
-	// TODO: Linux/MacOS
-#endif
-
-namespace Nano::Networking
-{
-
-	struct Buffer
-	{
-		void* Data;
-		uint64_t Size;
-
-		Buffer()
-			: Data(nullptr), Size(0)
-		{
-		}
-
-		Buffer(const void* data, uint64_t size)
-			: Data((void*)data), Size(size)
-		{
-		}
-
-		Buffer(const Buffer& other, uint64_t size)
-			: Data(other.Data), Size(size)
-		{
-		}
-
-		static Buffer Copy(const Buffer& other)
-		{
-			Buffer buffer;
-			buffer.Allocate(other.Size);
-			memcpy(buffer.Data, other.Data, other.Size);
-			return buffer;
-		}
-
-		static Buffer Copy(const void* data, uint64_t size)
-		{
-			Buffer buffer;
-			buffer.Allocate(size);
-			memcpy(buffer.Data, data, size);
-			return buffer;
-		}
-
-		void Allocate(uint64_t size)
-		{
-			delete[](uint8_t*)Data;
-			Data = nullptr;
-
-			if (size == 0)
-				return;
-
-			Data = new uint8_t[size];
-			Size = size;
-		}
-
-		void Release()
-		{
-			delete[](uint8_t*)Data;
-			Data = nullptr;
-			Size = 0;
-		}
-
-		void ZeroInitialize()
-		{
-			if (Data)
-				memset(Data, 0, Size);
-		}
-
-		template<typename T>
-		T& Read(uint64_t offset = 0)
-		{
-			return *(T*)((uint32_t*)Data + offset);
-		}
-
-		template<typename T>
-		const T& Read(uint64_t offset = 0) const
-		{
-			return *(T*)((uint32_t*)Data + offset);
-		}
-
-		uint8_t* ReadBytes(uint64_t size, uint64_t offset) const
-		{
-			//WL_CORE_ASSERT(offset + size <= Size, "Buffer overflow!");
-			uint8_t* buffer = new uint8_t[size];
-			memcpy(buffer, (uint8_t*)Data + offset, size);
-			return buffer;
-		}
-
-		void Write(const void* data, uint64_t size, uint64_t offset = 0)
-		{
-			//WL_CORE_ASSERT(offset + size <= Size, "Buffer overflow!");
-			memcpy((uint8_t*)Data + offset, data, size);
-		}
-
-		operator bool() const
-		{
-			return Data;
-		}
-
-		uint8_t& operator[](int index)
-		{
-			return ((uint8_t*)Data)[index];
-		}
-
-		uint8_t operator[](int index) const
-		{
-			return ((uint8_t*)Data)[index];
-		}
-
-		template<typename T>
-		T* As() const
-		{
-			return (T*)Data;
-		}
-
-		inline uint64_t GetSize() const { return Size; }
-	};
-
-}
-
-namespace Nano::Networking::Utils 
-{
-
-	std::vector<std::string> SplitString(const std::string_view string, const std::string_view& delimiters)
-	{
-		size_t first = 0;
-
-		std::vector<std::string> result;
-
-		while (first <= string.size())
-		{
-			const auto second = string.find_first_of(delimiters, first);
-
-			if (first != second)
-				result.emplace_back(string.substr(first, second - first));
-
-			if (second == std::string_view::npos)
-				break;
-
-			first = second + 1;
-		}
-
-		return result;
-	}
-
-	std::vector<std::string> SplitString(const std::string_view string, const char delimiter)
-	{
-		return SplitString(string, std::string(1, delimiter));
-	}
-
-	bool IsValidIPAddress(std::string_view ipAddress)
-	{
-		std::string ipAddressStr(ipAddress.data(), ipAddress.size());
-
-		SteamNetworkingIPAddr address;
-		return address.ParseString(ipAddressStr.c_str());
-	}
-
-	// Platform-specific implementations
-	std::string ResolveDomainName(std::string_view name)
-	{
-#if defined(NN_PLATFORM_WINDOWS)
-		// Adapted from example at https://learn.microsoft.com/en-us/windows/win32/api/ws2tcpip/nf-ws2tcpip-getaddrinfo
-		WSADATA wsaData;
-		int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-		if (iResult != 0)
-		{
-			printf("WSAStartup failed with %u\n", WSAGetLastError());
-			return {};
-		}
-
-		bool hasPort = name.find(":") != std::string::npos;
-		std::string domain, port;
-		if (hasPort)
-		{
-			std::vector<std::string> domainAndPort = SplitString(name, ':');
-			if (domainAndPort.size() != 2)
-				return {};
-			domain = domainAndPort[0];
-			port = domainAndPort[1];
-			name = domain;
-		}
-
-		addrinfo hints;
-		ZeroMemory(&hints, sizeof(hints));
-		hints.ai_family = AF_UNSPEC;
-		hints.ai_socktype = SOCK_STREAM;
-		hints.ai_protocol = IPPROTO_TCP;
-
-		addrinfo* addressResult = NULL;
-		DWORD dwRetval = getaddrinfo(name.data(), nullptr, &hints, &addressResult);
-		if (dwRetval != 0)
-		{
-			printf("getaddrinfo failed with error: %d\n", dwRetval);
-			WSACleanup();
-			return {};
-		}
-
-		std::string ipAddressStr;
-		for (addrinfo* ptr = addressResult; ptr != NULL; ptr = ptr->ai_next)
-		{
-			switch (ptr->ai_family)
-			{
-			case AF_UNSPEC:
-				// Unspecified
-				break;
-			case AF_INET:
-			{
-				sockaddr_in* sockaddr_ipv4 = (sockaddr_in*)ptr->ai_addr;
-				char* ipAddress = inet_ntoa(sockaddr_ipv4->sin_addr);
-				ipAddressStr = ipAddress;
-				break;
-			}
-			case AF_INET6:
-			{
-				const DWORD ipbufferlength = 46;
-				char ipstringbuffer[ipbufferlength];
-				DWORD actualIPBufferLength = ipbufferlength;
-				LPSOCKADDR sockaddr_ip = (LPSOCKADDR)ptr->ai_addr;
-				INT iRetval = WSAAddressToStringA(sockaddr_ip, (DWORD)ptr->ai_addrlen, nullptr, ipstringbuffer, &actualIPBufferLength);
-
-				if (iRetval)
-				{
-					printf("WSAAddressToString failed with %u\n", WSAGetLastError());
-					WSACleanup();
-					return {};
-				}
-
-				ipAddressStr = std::string(ipstringbuffer, actualIPBufferLength);
-			}
-			}
-
-		}
-
-		freeaddrinfo(addressResult);
-		WSACleanup();
-
-		return hasPort ? (ipAddressStr + ":" + port) : ipAddressStr;
-#else
-		bool hasPort = name.find(":") != std::string::npos;
-		std::string domain, port;
-		if (hasPort)
-		{
-			std::vector<std::string> domainAndPort = SplitString(name, ':');
-			if (domainAndPort.size() != 2)
-				return {};
-			domain = domainAndPort[0];
-			port = domainAndPort[1];
-			name = domain;
-		}
-
-		addrinfo hints{};
-		hints.ai_family = AF_UNSPEC;
-		hints.ai_socktype = SOCK_STREAM;
-		hints.ai_protocol = IPPROTO_TCP;
-
-		addrinfo* res = nullptr;
-		int err = getaddrinfo(name.data(), nullptr, &hints, &res);
-		if (err != 0)
-		{
-			std::cerr << "getaddrinfo failed: " << gai_strerror(err) << "\n";
-			return {};
-		}
-
-		std::string ipAddressStr;
-		for (addrinfo* ptr = res; ptr != nullptr; ptr = ptr->ai_next)
-		{
-			char ipstr[INET6_ADDRSTRLEN] = {};
-
-			if (ptr->ai_family == AF_INET)
-			{
-				sockaddr_in* ipv4 = reinterpret_cast<sockaddr_in*>(ptr->ai_addr);
-				inet_ntop(AF_INET, &(ipv4->sin_addr), ipstr, sizeof(ipstr));
-				ipAddressStr = ipstr;
-				break; // Prefer IPv4
-			}
-			else if (ptr->ai_family == AF_INET6)
-			{
-				sockaddr_in6* ipv6 = reinterpret_cast<sockaddr_in6*>(ptr->ai_addr);
-				inet_ntop(AF_INET6, &(ipv6->sin6_addr), ipstr, sizeof(ipstr));
-				ipAddressStr = ipstr;
-				// Don't break — prefer IPv4 if available, but fallback to IPv6
-			}
-		}
-
-		freeaddrinfo(res);
-
-		return hasPort ? (ipAddressStr + ":" + port) : ipAddressStr;
-#endif
-	}
-
-}
-
+/*
 namespace Nano::Networking 
 {
 
@@ -907,25 +601,31 @@ namespace Nano::Networking
 	};
 
 }
+*/
 
 #define NN_SERVER 0
 #define NN_CLIENT (!NN_SERVER)
 
 using namespace Nano::Networking;
 
+void MessageReceived(void* userData, ClientMessageType type, const std::string& message)
+{
+	std::cout << message << std::endl;
+}
+
 #if NN_CLIENT
 int main(int argc, char* argv[])
 {
 	(void)argc; (void)argv;
 
-	Client client;
-	client.ConnectToServer("127.0.0.1:8000");
+	Client client(nullptr, nullptr, nullptr, nullptr, MessageReceived);
+	const ConnectionInfo& info = client.Connect("127.0.0.1:8000", 10, 5000);
 
-	while (true)
+	info.Wait();
+	if (info.Failed())
 	{
+		std::cout << "Failed to connect" << std::endl;
 	}
-
-	client.Disconnect();
 
 	return 0;
 }

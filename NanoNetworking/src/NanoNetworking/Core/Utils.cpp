@@ -1,8 +1,12 @@
 #include "nnpch.h"
 #include "Utils.hpp"
 
+#include "NanoNetworking/Core/Logging.hpp"
+
 #define NANO_IMPLEMENTATION
 #include <Nano/Nano.hpp>
+
+#include <format>
 
 #if defined(NN_PLATFORM_WINDOWS)
 	#include <WinSock2.h>
@@ -31,7 +35,7 @@ namespace Nano::Networking::Utils
 		std::string domain = std::string(name);
 		std::string port;
 
-		// Has a port in format: 127.0.0.1:8000
+		// Has a port in format: google.com:8000
 		if (name.contains(":"))
 		{
 			std::vector<std::string> domainAndPort = Nano::Text::SplitString(name, ':');
