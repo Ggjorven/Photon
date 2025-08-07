@@ -39,6 +39,10 @@ MacOSVersion = "14.5"
 
 Dependencies =
 {
+	Nano = 
+	{
+		IncludeDir = "%{wks.location}/vendor/Nano/Nano/Nano/include"
+	},
 	GameNetworkingSockets =
 	{
 		LibName = "GameNetworkingSockets",

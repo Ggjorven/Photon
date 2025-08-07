@@ -42,7 +42,7 @@ project "NanoNetworking"
 
 	links
 	{
-		"%{Dependencies.GameNetworkingSockets.LibName}"
+		"%{Dependencies.GameNetworkingSockets.LibName}",
 	}
 
 	filter "system:windows"

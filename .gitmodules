@@ -7,3 +7,6 @@
 [submodule "vendor/abseil/abseil"]
 	path = vendor/abseil/abseil
 	url = https://github.com/abseil/abseil-cpp.git
+[submodule "vendor/Nano/Nano"]
+	path = vendor/Nano/Nano
+	url = https://github.com/Ggjorven/Nano.git
