@@ -19,12 +19,6 @@ namespace Nano::Networking
 	{ 
 		if (func)
 			return func(std::forward<TArgs>(args)...);
-
-		//if constexpr (std::is_same_v<std::invoke_result_t<TFunc, TArgs...>, void>)
-		//	if (func)
-		//		func(std::forward<TArgs>(args)...);
-		//else
-		//	return (func ? func(std::forward<TArgs>(args)...) : std::invoke_result_t<TFunc, TArgs...>());
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -51,11 +45,11 @@ namespace Nano::Networking
 
 			// Print an appropriate message
 			if (statusInfo->m_eOldState == k_ESteamNetworkingConnectionState_Connecting)
-				CallCallback(user.MessageCallback, user.Data, ClientMessageType::Error, std::format("Could not connect to remote host. {}", statusInfo->m_info.m_szEndDebug));
+				CallCallback(user.MessageCallback, user.Data, MessageType::Error, std::format("Could not connect to remote host. {}", statusInfo->m_info.m_szEndDebug));
 			else if (statusInfo->m_info.m_eState == k_ESteamNetworkingConnectionState_ProblemDetectedLocally)
-				CallCallback(user.MessageCallback, user.Data, ClientMessageType::Error, std::format("Lost connection with remote host. {}", statusInfo->m_info.m_szEndDebug));
+				CallCallback(user.MessageCallback, user.Data, MessageType::Error, std::format("Lost connection with remote host. {}", statusInfo->m_info.m_szEndDebug));
 			else
-				CallCallback(user.MessageCallback, user.Data, ClientMessageType::Error, std::format("Disconnected from host. {}", statusInfo->m_info.m_szEndDebug));
+				CallCallback(user.MessageCallback, user.Data, MessageType::Error, std::format("Disconnected from host. {}", statusInfo->m_info.m_szEndDebug));
 
 			// Cleanup
 			client.m_Interface->CloseConnection(statusInfo->m_hConn, 0, nullptr, false);
@@ -136,6 +130,19 @@ namespace Nano::Networking
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
+	// Upload methods
+	////////////////////////////////////////////////////////////////////////////////////
+	SendResult Client::SendBufferToConnection(Buffer buffer)
+	{
+		return SendBuffer(buffer, k_nSteamNetworkingSend_Unreliable);
+	}
+
+	SendResult Client::SendReliableBufferToConnection(Buffer buffer)
+	{
+		return SendBuffer(buffer, k_nSteamNetworkingSend_Reliable);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
 	// Private methods
 	////////////////////////////////////////////////////////////////////////////////////
 	void Client::Thread(ConnectionInfo& info, std::promise<void>&& promise, uint64_t pollingRateMs, uint64_t timeoutMs)
@@ -210,7 +217,7 @@ namespace Nano::Networking
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
-	// Polling
+	// Polling methods
 	////////////////////////////////////////////////////////////////////////////////////
 	void Client::PollIncomingMessages()
 	{
@@ -223,7 +230,7 @@ namespace Nano::Networking
 				break;
 			else if (messageCount == -1)
 			{
-				CallCallback(m_User.MessageCallback, m_User.Data, ClientMessageType::Fatal, "Invalid connection handle passed in.");
+				CallCallback(m_User.MessageCallback, m_User.Data, MessageType::Fatal, "Invalid connection handle passed in.");
 				return;
 			}
 
@@ -235,6 +242,22 @@ namespace Nano::Networking
 	void Client::PollConnectionStateChanges()
 	{
 		m_Interface->RunCallbacks();
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Upload method
+	////////////////////////////////////////////////////////////////////////////////////
+	SendResult Client::SendBuffer(Buffer buffer, int network)
+	{
+		EResult result = m_Interface->SendMessageToConnection(m_Connection, buffer.Data, static_cast<uint32_t>(buffer.Size), network, nullptr);
+
+		if (result == k_EResultOK)
+			return SendResult::Okay;
+
+		// Custom results
+		// FUTURE TODO: ...
+
+		return SendResult::Failed;
 	}
 
 }

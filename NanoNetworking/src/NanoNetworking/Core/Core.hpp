@@ -26,6 +26,26 @@ namespace Nano::Networking
 		InvalidIP
 	};
 
+	enum class ServerStatus : uint8_t
+	{
+		Down = 0,
+		Initializing,
+		Up,
+		FailedToInitialize, FailedToListen
+	};
+
+	enum class MessageType : uint8_t 
+	{ 
+		Trace = 0, Info, Warn, Error, Fatal 
+	};
+
+	enum class SendResult : uint8_t
+	{
+		Okay = 0,
+		Failed
+		// TODO: More...
+	};
+
 	struct Error
 	{
 	public:

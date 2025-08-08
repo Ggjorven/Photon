@@ -16,8 +16,6 @@ namespace Nano::Networking
 
 	class Client;
 
-	enum class ClientMessageType : uint8_t { Trace = 0, Info, Warn, Error, Fatal };
-
 	////////////////////////////////////////////////////////////////////////////////////
 	// ConnectionInfo
 	////////////////////////////////////////////////////////////////////////////////////
@@ -55,7 +53,7 @@ namespace Nano::Networking
 		using ServerConnectedCallbackFn = void (*)(void* userData);
 		//using ServerDisconnectedCallback = std::function<void()>;
 		using ServerDisconnectedCallbackFn = void (*)(void* userData);
-		using MessageCallbackFn = void (*)(void* userData, ClientMessageType type, const std::string& message);
+		using MessageCallbackFn = void (*)(void* userData, MessageType type, const std::string& message);
 	public:
 		// Constructor & Destructor
 		Client(void* userData = nullptr, DataReceivedCallbackFn dataReceivedCallback = nullptr, ServerConnectedCallbackFn serverConnectedCallback = nullptr, ServerDisconnectedCallbackFn serverDisconnectedCallback = nullptr, MessageCallbackFn messageCallback = nullptr);
@@ -64,6 +62,15 @@ namespace Nano::Networking
 		// Connection methods
 		const ConnectionInfo& Connect(std::string_view serverAddress, uint64_t pollingRateMs = 10, uint64_t timeoutMs = 10'000); // Note: ConnectionInfo can be safely discarded, but should be checked for failure
 		void Disconnect(); // Note: Can safely be called even when not connected to anything.
+
+		// Upload methods
+		SendResult SendBufferToConnection(Buffer buffer);
+		SendResult SendReliableBufferToConnection(Buffer buffer);
+
+		template<typename T> SendResult SendToConnection(const T& data) { return SendBufferToConnection(Buffer(&data, sizeof(T))); }
+		template<typename T> SendResult SendReliableToConnection(const T& data) { return SendReliableBufferToConnection(Buffer(&data, sizeof(T)));}
+		template<> SendResult SendToConnection<std::string>(const std::string& str) { return SendBufferToConnection(Buffer(str.data(), str.size())); }
+		template<> SendResult SendReliableToConnection<std::string>(const std::string& str) { return SendReliableBufferToConnection(Buffer(str.data(), str.size())); }
 
 		// Setters
 		inline void SetUserData(void* data) { m_User.Data = data; }
@@ -84,6 +91,9 @@ namespace Nano::Networking
 		// Polling methods
 		void PollIncomingMessages();
 		void PollConnectionStateChanges();
+
+		// Upload method
+		SendResult SendBuffer(Buffer buffer, int network);
 
 		// Static callbacks
 		friend void ConnectionStatusChangedCallback(SteamNetConnectionStatusChangedCallback_t* info);
