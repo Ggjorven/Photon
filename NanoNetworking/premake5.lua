@@ -71,6 +71,14 @@ project "NanoNetworking"
 		systemversion "latest"
 		staticruntime "on"
 
+		links
+		{
+			"%{Dependencies.Abseil.LibName}",
+			"%{Dependencies.ProtoBuf.LibName}",
+
+			"openssl"
+		}
+
     filter "system:macosx"
 		defines "NN_PLATFORM_DESKTOP"
 		defines "NN_PLATFORM_MACOS"

@@ -175,6 +175,11 @@ project "protoc"
 		systemversion "latest"
 		staticruntime "On"
 
+		links
+		{
+			"%{Dependencies.Abseil.LibName}"
+		}
+
 	filter "system:macosx"
 		systemversion(MacOSVersion)
 		staticruntime "On"
