@@ -35,13 +35,12 @@ project "Sandbox"
 
 		"%{wks.location}/NanoNetworking/src",
 	}
+	includedirs(Dependencies.Combined.IncludeDirs)
 
 	links
 	{
 		"NanoNetworking",
 	}
-
-	nn_include_dependencies()
 
 	filter "system:windows"
 		defines "NN_PLATFORM_DESKTOP"

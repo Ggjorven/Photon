@@ -1,3 +1,5 @@
+local Dependencies = require("Dependencies")
+
 ------------------------------------------------------------------------------
 -- Utilities
 ------------------------------------------------------------------------------
@@ -33,71 +35,10 @@ end)
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
--- Dependencies
+-- Solution
 ------------------------------------------------------------------------------
 MacOSVersion = "14.5"
 
-Dependencies =
-{
-	Nano = 
-	{
-		IncludeDir = "%{wks.location}/vendor/Nano/Nano/Nano/include"
-	},
-	GameNetworkingSockets =
-	{
-		LibName = "GameNetworkingSockets",
-		IncludeDirs = { 
-			"%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/include", 
-			"%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src", 
-			"%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/public", 
-		},
-	},
-
-	OpenSSL = {},
-	ProtoBuf = 
-	{
-		IncludeDir = "%{wks.location}/vendor/protobuf/protobuf/src",
-		LibName = "protobuf"
-	},
-	Abseil = 
-	{
-		IncludeDir = "%{wks.location}/vendor/abseil/abseil",
-		LibName = "abseil"
-	},
-}
-
-function nn_include_dependencies()
-	for name, dep in pairs(Dependencies) do
-		if dep.IncludeDir then
-			includedirs { dep.IncludeDir }
-		end
-		if dep.IncludeDirs then
-			includedirs { dep.IncludeDirs }
-		end
-	end
-end
-------------------------------------------------------------------------------
-
-------------------------------------------------------------------------------
--- Platform specific
-------------------------------------------------------------------------------
-if os.target() == "windows" then
-	Dependencies.OpenSSL = 
-	{
-		IncludeDir = "%{wks.location}/vendor/OpenSSL/windows/include",
-		LibNames = {
-			"libcrypto",
-			"libssl"
-		},
-		DllName = "libcrypto-3-x64.dll",
-		LibDir = "%{wks.location}/vendor/OpenSSL/windows/lib",
-	}
-end
-------------------------------------------------------------------------------
-
-------------------------------------------------------------------------------
--- Solution
-------------------------------------------------------------------------------
 outputdir = "%{cfg.buildcfg}-%{cfg.system}"
 
 workspace "NanoNetworking"

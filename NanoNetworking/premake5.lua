@@ -37,8 +37,7 @@ project "NanoNetworking"
 		"src",
 		"src/NanoNetworking",
 	}
-
-	nn_include_dependencies()
+	includedirs(Dependencies.Combined.IncludeDirs)
 
 	links
 	{
