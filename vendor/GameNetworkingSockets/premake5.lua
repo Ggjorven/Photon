@@ -4,7 +4,7 @@ project "GameNetworkingSockets"
 	dependson "protoc"
 	kind "StaticLib"
 	language "C++"
-	cppdialect "C++17"
+	cppdialect "C++20"
 	-- staticruntime "Off"
 	warnings "Off"
 
@@ -122,6 +122,9 @@ project "GameNetworkingSockets"
 		staticruntime "On"
 
 		defines("WEBRTC_MAC")
+
+	filter "action:vs*"
+		buildoptions { "/Zc:preprocessor" }
 
 	filter "action:xcode*"
 		-- Note: If we don't add the header files to the externalincludedirs

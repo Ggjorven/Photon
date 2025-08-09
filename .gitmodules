@@ -7,3 +7,6 @@
 [submodule "vendor/Nano/Nano"]
 	path = vendor/Nano/Nano
 	url = https://github.com/Ggjorven/Nano.git
+[submodule "vendor/GameNetworkingSockets/GameNetworkingSockets"]
+	path = vendor/GameNetworkingSockets/GameNetworkingSockets
+	url = https://github.com/Ggjorven/GameNetworkingSockets.git
