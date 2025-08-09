@@ -67,6 +67,7 @@ namespace Nano::Networking
 		SendResult SendBufferToConnection(Buffer buffer);
 		SendResult SendReliableBufferToConnection(Buffer buffer);
 
+		// Note: Only std::string has a specialized method, the other will just be the address and size
 		template<typename T> SendResult SendToConnection(const T& data) { return SendBufferToConnection(Buffer(&data, sizeof(T))); }
 		template<typename T> SendResult SendReliableToConnection(const T& data) { return SendReliableBufferToConnection(Buffer(&data, sizeof(T)));}
 

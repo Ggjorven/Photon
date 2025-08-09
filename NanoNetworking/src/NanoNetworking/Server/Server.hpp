@@ -53,6 +53,19 @@ namespace Nano::Networking
 
 		void KickClient(ClientID clientID, const std::string& reason = "Kicked by host");
 
+		// Upload methods
+		void SendBufferToClient(ClientID clientID, Buffer buffer);
+		void SendReliableBufferToClient(ClientID clientID, Buffer buffer);
+
+		void SendBufferToAllClients(Buffer buffer);
+		void SendReliableBufferToAllClients(Buffer buffer);
+		
+		// Note: Only std::string has a specialized method, the other will just be the address and size
+		template<typename T> void SendToClient(ClientID clientID, const T& data);
+		template<typename T> void SendReliableToClient(ClientID clientID, const T& data);
+		template<typename T> void SendToAllClients(const T& data);
+		template<typename T> void SendReliableToAllClients(const T& data);
+
 		// Setters
 		inline void SetUserData(void* userData) { m_User.Data = userData; }
 		inline void SetDataReceivedCallback(const DataReceivedCallbackFn& function) { m_User.DataReceivedCallback = function; }
@@ -64,6 +77,8 @@ namespace Nano::Networking
 		inline ServerStatus GetStatus() const { return m_Status; }
 		inline bool IsUp() const { return (m_Status == ServerStatus::Up); }
 
+		inline std::map<ClientID, ClientInfo> GetConnectedClients() const { return m_ConnectedClients; }
+
 	private:
 		// Private methods
 		void Thread(uint16_t port, uint64_t pollingRateMs);
@@ -71,6 +86,9 @@ namespace Nano::Networking
 		// Polling methods
 		void PollIncomingMessages();
 		void PollConnectionStateChanges();
+
+		// Upload method
+		SendResult SendBuffer(ClientID clientID, Buffer buffer, int network);
 
 		// Static callbacks
 		friend void Server_ConnectionStatusChangedCallback(SteamNetConnectionStatusChangedCallback_t* info);
@@ -89,11 +107,69 @@ namespace Nano::Networking
 
 		ServerStatus m_Status = ServerStatus::Down;
 
-		std::map<HSteamNetConnection, ClientInfo> m_ConnectedClients;
+		std::map<ClientID, ClientInfo> m_ConnectedClients;
 
 		ISteamNetworkingSockets* m_Interface = nullptr;
 		HSteamListenSocket m_ListenSocket = 0u;
 		HSteamNetPollGroup m_PollGroup = 0u;
 	};
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Templated methods
+	////////////////////////////////////////////////////////////////////////////////////
+	template<typename T>
+	inline void Server::SendToClient(ClientID clientID, const T& data)
+	{
+		SendBuffer(clientID, Buffer(&data, sizeof(T)), k_nSteamNetworkingSend_Unreliable);
+	}
+
+	template<typename T>
+	inline void Server::SendReliableToClient(ClientID clientID, const T& data)
+	{
+		SendBuffer(clientID, Buffer(&data, sizeof(T)), k_nSteamNetworkingSend_Reliable);
+	}
+
+	template<typename T>
+	inline void Server::SendToAllClients(const T& data)
+	{
+		for (const auto& [clientID, _] : m_ConnectedClients)
+			SendBuffer(clientID, Buffer(&data, sizeof(T)), k_nSteamNetworkingSend_Unreliable);
+	}
+
+	template<typename T>
+	inline void Server::SendReliableToAllClients(const T& data)
+	{
+		for (const auto& [clientID, _] : m_ConnectedClients)
+			SendBuffer(clientID, Buffer(&data, sizeof(T)), k_nSteamNetworkingSend_Reliable);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Specialized methods
+	////////////////////////////////////////////////////////////////////////////////////
+	template<>
+	inline void Server::SendToClient<std::string>(ClientID clientID, const std::string& str)
+	{
+		SendBuffer(clientID, Buffer(str.data(), str.size()), k_nSteamNetworkingSend_Unreliable);
+	}
+
+	template<>
+	inline void Server::SendReliableToClient<std::string>(ClientID clientID, const std::string& str)
+	{
+		SendBuffer(clientID, Buffer(str.data(), str.size()), k_nSteamNetworkingSend_Reliable);
+	}
+
+	template<>
+	inline void Server::SendToAllClients<std::string>(const std::string& str)
+	{
+		for (const auto& [clientID, _] : m_ConnectedClients)
+			SendBuffer(clientID, Buffer(str.data(), str.size()), k_nSteamNetworkingSend_Unreliable);
+	}
+
+	template<>
+	inline void Server::SendReliableToAllClients<std::string>(const std::string& str)
+	{
+		for (const auto& [clientID, _] : m_ConnectedClients)
+			SendBuffer(clientID, Buffer(str.data(), str.size()), k_nSteamNetworkingSend_Reliable);
+	}
 
 }

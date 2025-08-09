@@ -114,8 +114,8 @@ namespace Nano::Networking::Utils
 
 		freeaddrinfo(addressResult);
 		WSACleanup();
-#else // TODO: ...
-		addrinfo hints{};
+#else
+		addrinfo hints = {};
 		hints.ai_family = AF_UNSPEC;
 		hints.ai_socktype = SOCK_STREAM;
 		hints.ai_protocol = IPPROTO_TCP;
@@ -123,10 +123,7 @@ namespace Nano::Networking::Utils
 		addrinfo* res = nullptr;
 		int err = getaddrinfo(name.data(), nullptr, &hints, &res);
 		if (err != 0)
-		{
-			std::cerr << "getaddrinfo failed: " << gai_strerror(err) << "\n";
-			return {};
-		}
+			return std::unexpected(Error(std::format("getaddrinfo failed with error: {}", gai_strerror(err))));
 
 		std::string ipAddressStr;
 		for (addrinfo* ptr = res; ptr != nullptr; ptr = ptr->ai_next)
@@ -145,7 +142,7 @@ namespace Nano::Networking::Utils
 				sockaddr_in6* ipv6 = reinterpret_cast<sockaddr_in6*>(ptr->ai_addr);
 				inet_ntop(AF_INET6, &(ipv6->sin6_addr), ipstr, sizeof(ipstr));
 				ipAddressStr = ipstr;
-				// Don't break � prefer IPv4 if available, but fallback to IPv6
+				// Don't break, prefer IPv4 if available, but fallback to IPv6
 			}
 		}
 

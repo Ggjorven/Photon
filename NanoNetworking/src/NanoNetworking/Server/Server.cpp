@@ -42,7 +42,7 @@ namespace Nano::Networking
 			if (statusInfo->m_eOldState == k_ESteamNetworkingConnectionState_Connected)
 			{
 				// Note: This must be valid, since it was previously connected
-				auto itClient = server.m_ConnectedClients.find(statusInfo->m_hConn);
+				auto itClient = server.m_ConnectedClients.find(static_cast<ClientID>(statusInfo->m_hConn));
 
 				CallCallback(server.m_User.ClientDisconnectedCallback, server.m_User.Data, itClient->second);
 				server.m_ConnectedClients.erase(itClient);
@@ -124,6 +124,32 @@ namespace Nano::Networking
 	void Server::KickClient(ClientID clientID, const std::string& reason)
 	{
 		m_Interface->CloseConnection(static_cast<HSteamNetConnection>(clientID), 0, reason.c_str(), false);
+		// Server_ConnectionStatusChangedCallback, handles cleaning up.
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Upload methods
+	////////////////////////////////////////////////////////////////////////////////////
+	void Server::SendBufferToClient(ClientID clientID, Buffer buffer)
+	{
+		SendBuffer(clientID, buffer, k_nSteamNetworkingSend_Unreliable);
+	}
+
+	void Server::SendReliableBufferToClient(ClientID clientID, Buffer buffer)
+	{
+		SendBuffer(clientID, buffer, k_nSteamNetworkingSend_Reliable);
+	}
+
+	void Server::SendBufferToAllClients(Buffer buffer)
+	{
+		for (const auto& [clientID, _] : m_ConnectedClients)
+			SendBuffer(clientID, buffer, k_nSteamNetworkingSend_Unreliable);
+	}
+
+	void Server::SendReliableBufferToAllClients(Buffer buffer)
+	{
+		for (const auto& [clientID, _] : m_ConnectedClients)
+			SendBuffer(clientID, buffer, k_nSteamNetworkingSend_Reliable);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -179,20 +205,9 @@ namespace Nano::Networking
 		}
 
 		s_SocketToServer[m_ListenSocket] = this;
+		m_Status = ServerStatus::Up;
 
-		// Poll message while connecting
-		while (m_Status == ServerStatus::Initializing)
-		{
-			PollIncomingMessages();
-			PollConnectionStateChanges();
-			std::this_thread::sleep_for(std::chrono::milliseconds(pollingRateMs));
-		}
-
-		// Connected
-		//if (m_Status == ServerStatus::Up)
-		//	promise.set_value(); // Notify ConnectionInfo that we're connected
-
-		// Poll message while connected
+		// Poll messages while up
 		while (m_Status == ServerStatus::Up)
 		{
 			PollIncomingMessages();
@@ -250,6 +265,22 @@ namespace Nano::Networking
 	void Server::PollConnectionStateChanges()
 	{
 		m_Interface->RunCallbacks();
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Upload method
+	////////////////////////////////////////////////////////////////////////////////////
+	SendResult Server::SendBuffer(ClientID clientID, Buffer buffer, int network)
+	{
+		EResult result = m_Interface->SendMessageToConnection(static_cast<HSteamNetConnection>(clientID), buffer.Data, static_cast<uint32_t>(buffer.Size), network, nullptr);
+		
+		if (result == k_EResultOK)
+			return SendResult::Okay;
+
+		// Custom results
+		// FUTURE TODO: ...
+
+		return SendResult::Failed;
 	}
 
 }
