@@ -4,7 +4,7 @@
 #include "NanoNetworking/Client/Client.hpp"
 #include "NanoNetworking/Server/Server.hpp"
 
-#define NN_SERVER 1
+#define NN_SERVER 0
 #define NN_CLIENT (!NN_SERVER)
 
 using namespace Nano::Networking;

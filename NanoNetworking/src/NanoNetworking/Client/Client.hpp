@@ -94,7 +94,7 @@ namespace Nano::Networking
 		SendResult SendBuffer(Buffer buffer, int network);
 
 		// Static callbacks
-		friend void ConnectionStatusChangedCallback(SteamNetConnectionStatusChangedCallback_t* info);
+		friend void Client_ConnectionStatusChangedCallback(SteamNetConnectionStatusChangedCallback_t* info);
 
 	private:
 		std::thread m_NetworkThread;
@@ -119,13 +119,13 @@ namespace Nano::Networking
 	// Specialized templates
 	////////////////////////////////////////////////////////////////////////////////////
 	template<> 
-	SendResult Client::SendToConnection<std::string>(const std::string& str) 
+	inline SendResult Client::SendToConnection<std::string>(const std::string& str) 
 	{ 
 		return SendBufferToConnection(Buffer(str.data(), str.size())); 
 	}
 
 	template<> 
-	SendResult Client::SendReliableToConnection<std::string>(const std::string& str) 
+	inline SendResult Client::SendReliableToConnection<std::string>(const std::string& str)
 	{ 
 		return SendReliableBufferToConnection(Buffer(str.data(), str.size())); 
 	}

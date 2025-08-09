@@ -15,7 +15,7 @@ namespace Nano::Networking
 	// Helper method
 	////////////////////////////////////////////////////////////////////////////////////
 	template<typename TFunc, typename ...TArgs>
-	auto CallCallback(TFunc&& func, TArgs&& ...args)
+	static auto CallCallback(TFunc&& func, TArgs&& ...args)
 	{
 		if (func)
 			return func(std::forward<TArgs>(args)...);
@@ -24,7 +24,7 @@ namespace Nano::Networking
 	////////////////////////////////////////////////////////////////////////////////////
 	// Callbacks
 	////////////////////////////////////////////////////////////////////////////////////
-	void ConnectionStatusChangedCallback(SteamNetConnectionStatusChangedCallback_t* statusInfo)
+	void Server_ConnectionStatusChangedCallback(SteamNetConnectionStatusChangedCallback_t* statusInfo)
 	{
 		Server& server = *s_SocketToServer[statusInfo->m_info.m_hListenSocket];
 
@@ -153,7 +153,7 @@ namespace Nano::Networking
 			serverLocalAddress.m_port = port;
 
 			SteamNetworkingConfigValue_t options = {};
-			options.SetPtr(k_ESteamNetworkingConfig_Callback_ConnectionStatusChanged, reinterpret_cast<void*>(ConnectionStatusChangedCallback));
+			options.SetPtr(k_ESteamNetworkingConfig_Callback_ConnectionStatusChanged, reinterpret_cast<void*>(&Server_ConnectionStatusChangedCallback));
 
 			m_ListenSocket = m_Interface->CreateListenSocketIP(serverLocalAddress, 1, &options);
 

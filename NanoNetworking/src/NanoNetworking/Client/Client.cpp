@@ -15,7 +15,7 @@ namespace Nano::Networking
 	// Helper method
 	////////////////////////////////////////////////////////////////////////////////////
 	template<typename TFunc, typename ...TArgs>
-	auto CallCallback(TFunc&& func, TArgs&& ...args) 
+	static auto CallCallback(TFunc&& func, TArgs&& ...args)
 	{ 
 		if (func)
 			return func(std::forward<TArgs>(args)...);
@@ -24,7 +24,7 @@ namespace Nano::Networking
 	////////////////////////////////////////////////////////////////////////////////////
 	// Callbacks
 	////////////////////////////////////////////////////////////////////////////////////
-	void ConnectionStatusChangedCallback(SteamNetConnectionStatusChangedCallback_t* statusInfo)
+	void Client_ConnectionStatusChangedCallback(SteamNetConnectionStatusChangedCallback_t* statusInfo)
 	{
 		Client& client = *s_ConnectionToClient[statusInfo->m_hConn];
 		ConnectionInfo& info = client.m_Info;
@@ -175,7 +175,7 @@ namespace Nano::Networking
 		SteamNetworkingConfigValue_t options = {};
 		{
 			options.SetInt32(k_ESteamNetworkingConfig_TimeoutInitial, static_cast<int32_t>(timeoutMs));
-			options.SetPtr(k_ESteamNetworkingConfig_Callback_ConnectionStatusChanged, reinterpret_cast<void*>(&ConnectionStatusChangedCallback));
+			options.SetPtr(k_ESteamNetworkingConfig_Callback_ConnectionStatusChanged, reinterpret_cast<void*>(&Client_ConnectionStatusChangedCallback));
 			
 			m_Connection = m_Interface->ConnectByIPAddress(address, 1, &options);
 			if (m_Connection == k_HSteamNetConnection_Invalid)

@@ -73,7 +73,7 @@ namespace Nano::Networking
 		void PollConnectionStateChanges();
 
 		// Static callbacks
-		friend void ConnectionStatusChangedCallback(SteamNetConnectionStatusChangedCallback_t* info);
+		friend void Server_ConnectionStatusChangedCallback(SteamNetConnectionStatusChangedCallback_t* info);
 
 	private:
 		std::thread m_NetworkThread;
