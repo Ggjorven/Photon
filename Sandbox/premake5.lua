@@ -1,3 +1,4 @@
+Dependencies = local_require("../Dependencies.lua")
 MacOSVersion = MacOSVersion or "14.5"
 
 project "Sandbox"

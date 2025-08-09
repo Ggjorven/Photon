@@ -1,14 +1,9 @@
-local Dependencies = require("Dependencies")
-
 ------------------------------------------------------------------------------
--- Utilities
+-- Utils
 ------------------------------------------------------------------------------
-local function GetIOResult(cmd)
-	local handle = io.popen(cmd) -- Open a console and execute the command.
-	local output = handle:read("*a") -- Read the output.
-	handle:close() -- Close the handle.
-
-	return output:match("^%s*(.-)%s*$") -- Trim any trailing whitespace (such as newlines)
+function local_require(path)
+	local chunk = assert(loadfile(path))
+	return chunk()  -- run the chunk, capturing the returned table
 end
 ------------------------------------------------------------------------------
 
