@@ -69,11 +69,11 @@ project "Sandbox"
 
 		links
 		{
-			"%{Dependencies.Abseil.LibName}",
-			"%{Dependencies.ProtoBuf.LibName}",
 			"%{Dependencies.GameNetworkingSockets.LibName}",
+			"%{Dependencies.ProtoBuf.LibName}",
+			"%{Dependencies.Abseil.LibName}",
 
-			"openssl"
+			"ssl", "crypto"
 		}
 
     filter "system:macosx"

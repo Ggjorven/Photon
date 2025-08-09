@@ -11,8 +11,12 @@
 #if defined(NN_PLATFORM_WINDOWS)
 	#include <WinSock2.h>
 	#include <ws2tcpip.h>
-#elif defined(NN_PLATFORM_UNIX) 
-	// TODO: Linux/MacOS
+#elif defined(NN_PLATFORM_LINUX) || defined(NN_PLATFORM_MACOS) 
+	#include <sys/types.h>      
+	#include <sys/socket.h>     
+	#include <netdb.h>          
+	#include <netinet/in.h>     
+	#include <arpa/inet.h>      
 #endif
 
 namespace Nano::Networking::Utils
@@ -111,18 +115,6 @@ namespace Nano::Networking::Utils
 		freeaddrinfo(addressResult);
 		WSACleanup();
 #else // TODO: ...
-		bool hasPort = name.find(":") != std::string::npos;
-		std::string domain, port;
-		if (hasPort)
-		{
-			std::vector<std::string> domainAndPort = SplitString(name, ':');
-			if (domainAndPort.size() != 2)
-				return {};
-			domain = domainAndPort[0];
-			port = domainAndPort[1];
-			name = domain;
-		}
-
 		addrinfo hints{};
 		hints.ai_family = AF_UNSPEC;
 		hints.ai_socktype = SOCK_STREAM;
@@ -153,7 +145,7 @@ namespace Nano::Networking::Utils
 				sockaddr_in6* ipv6 = reinterpret_cast<sockaddr_in6*>(ptr->ai_addr);
 				inet_ntop(AF_INET6, &(ipv6->sin6_addr), ipstr, sizeof(ipstr));
 				ipAddressStr = ipstr;
-				// Don't break — prefer IPv4 if available, but fallback to IPv6
+				// Don't break ï¿½ prefer IPv4 if available, but fallback to IPv6
 			}
 		}
 

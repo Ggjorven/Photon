@@ -69,8 +69,6 @@ namespace Nano::Networking
 
 		template<typename T> SendResult SendToConnection(const T& data) { return SendBufferToConnection(Buffer(&data, sizeof(T))); }
 		template<typename T> SendResult SendReliableToConnection(const T& data) { return SendReliableBufferToConnection(Buffer(&data, sizeof(T)));}
-		template<> SendResult SendToConnection<std::string>(const std::string& str) { return SendBufferToConnection(Buffer(str.data(), str.size())); }
-		template<> SendResult SendReliableToConnection<std::string>(const std::string& str) { return SendReliableBufferToConnection(Buffer(str.data(), str.size())); }
 
 		// Setters
 		inline void SetUserData(void* data) { m_User.Data = data; }
@@ -116,5 +114,20 @@ namespace Nano::Networking
 		ISteamNetworkingSockets* m_Interface = nullptr;
 		HSteamNetConnection m_Connection = 0;
 	};
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Specialized templates
+	////////////////////////////////////////////////////////////////////////////////////
+	template<> 
+	SendResult Client::SendToConnection<std::string>(const std::string& str) 
+	{ 
+		return SendBufferToConnection(Buffer(str.data(), str.size())); 
+	}
+
+	template<> 
+	SendResult Client::SendReliableToConnection<std::string>(const std::string& str) 
+	{ 
+		return SendReliableBufferToConnection(Buffer(str.data(), str.size())); 
+	}
 
 }

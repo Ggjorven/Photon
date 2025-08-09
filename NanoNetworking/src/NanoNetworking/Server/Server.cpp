@@ -153,7 +153,7 @@ namespace Nano::Networking
 			serverLocalAddress.m_port = port;
 
 			SteamNetworkingConfigValue_t options = {};
-			options.SetPtr(k_ESteamNetworkingConfig_Callback_ConnectionStatusChanged, static_cast<void*>(ConnectionStatusChangedCallback));
+			options.SetPtr(k_ESteamNetworkingConfig_Callback_ConnectionStatusChanged, reinterpret_cast<void*>(ConnectionStatusChangedCallback));
 
 			m_ListenSocket = m_Interface->CreateListenSocketIP(serverLocalAddress, 1, &options);
 

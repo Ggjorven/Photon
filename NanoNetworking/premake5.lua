@@ -73,8 +73,8 @@ project "NanoNetworking"
 
 		links
 		{
-			"%{Dependencies.Abseil.LibName}",
 			"%{Dependencies.ProtoBuf.LibName}",
+			"%{Dependencies.Abseil.LibName}",
 
 			"openssl"
 		}

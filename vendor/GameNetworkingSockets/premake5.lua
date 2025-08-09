@@ -112,6 +112,11 @@ project "GameNetworkingSockets"
 
 		defines("WEBRTC_POSIX")
 
+		links
+		{
+			"%{Dependencies.Abseil.LibName}",
+		}
+
 	filter "system:macosx"
 		systemversion(MacOSVersion)
 		staticruntime "On"

@@ -175,7 +175,7 @@ namespace Nano::Networking
 		SteamNetworkingConfigValue_t options = {};
 		{
 			options.SetInt32(k_ESteamNetworkingConfig_TimeoutInitial, static_cast<int32_t>(timeoutMs));
-			options.SetPtr(k_ESteamNetworkingConfig_Callback_ConnectionStatusChanged, static_cast<void*>(&ConnectionStatusChangedCallback));
+			options.SetPtr(k_ESteamNetworkingConfig_Callback_ConnectionStatusChanged, reinterpret_cast<void*>(&ConnectionStatusChangedCallback));
 			
 			m_Connection = m_Interface->ConnectByIPAddress(address, 1, &options);
 			if (m_Connection == k_HSteamNetConnection_Invalid)
