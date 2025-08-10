@@ -1,5 +1,5 @@
-Dependencies = local_require("../Dependencies.lua")
-MacOSVersion = MacOSVersion or "14.5"
+local Dependencies = local_require("../Dependencies.lua")
+local MacOSVersion = MacOSVersion or "14.5"
 
 project "NanoNetworking"
 	kind "StaticLib"
@@ -38,12 +38,9 @@ project "NanoNetworking"
 		"src",
 		"src/NanoNetworking",
 	}
-	includedirs(Dependencies.Combined.IncludeDirs)
 
-	links
-	{
-		"%{Dependencies.GameNetworkingSockets.LibName}",
-	}
+	includedirs(Dependencies.Combined.IncludeDirs)
+	links(Dependencies.GameNetworkingSockets.LibName)
 
 	filter "system:windows"
 		defines "NN_PLATFORM_DESKTOP"
@@ -62,7 +59,7 @@ project "NanoNetworking"
 			"ws2_32.lib"
 		}
 
-		libdirs("%{Dependencies.OpenSSL.LibDir}")
+		libdirs(Dependencies.OpenSSL.LibDir)
 		links(Dependencies.OpenSSL.LibNames)
 
 	filter "system:linux"
@@ -71,11 +68,11 @@ project "NanoNetworking"
 		systemversion "latest"
 		staticruntime "on"
 
+		links(Dependencies.ProtoBuf.LibName)
+		links(Dependencies.Abseil.LibName)
+
 		links
 		{
-			"%{Dependencies.ProtoBuf.LibName}",
-			"%{Dependencies.Abseil.LibName}",
-
 			"openssl"
 		}
 

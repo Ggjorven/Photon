@@ -1,5 +1,5 @@
-Dependencies = local_require("../Dependencies.lua")
-MacOSVersion = MacOSVersion or "14.5"
+local Dependencies = local_require("../Dependencies.lua")
+local MacOSVersion = MacOSVersion or "14.5"
 
 project "Sandbox"
 	kind "ConsoleApp"
@@ -36,6 +36,7 @@ project "Sandbox"
 
 		"%{wks.location}/NanoNetworking/src",
 	}
+
 	includedirs(Dependencies.Combined.IncludeDirs)
 
 	links
@@ -56,8 +57,8 @@ project "Sandbox"
 
 		postbuildcommands
 		{
-			'{COPYFILE} "%{Dependencies.OpenSSL.IncludeDir}/../bin/%{Dependencies.OpenSSL.DllName}" "%{cfg.targetdir}"',
-			'{COPYFILE} "%{Dependencies.OpenSSL.IncludeDir}/../bin/%{Dependencies.OpenSSL.DllName}" "%{prj.location}"' -- Note: This is the debugdir
+			'{COPYFILE} "' .. Dependencies.OpenSSL.IncludeDir .. '/../bin/' .. Dependencies.OpenSSL.DllName .. '" "%{cfg.targetdir}"',
+			'{COPYFILE} "' .. Dependencies.OpenSSL.IncludeDir .. '/../bin/' .. Dependencies.OpenSSL.DllName .. '" "%{prj.location}"' -- Note: This is the debugdir
 		}
 
 	filter "system:linux"
@@ -67,12 +68,12 @@ project "Sandbox"
 		systemversion "latest"
 		staticruntime "on"
 
+		links(Dependencies.GameNetworkingSockets.LibName)
+		links(Dependencies.ProtoBuf.LibName)
+		links(Dependencies.Abseil.LibName)
+		
 		links
 		{
-			"%{Dependencies.GameNetworkingSockets.LibName}",
-			"%{Dependencies.ProtoBuf.LibName}",
-			"%{Dependencies.Abseil.LibName}",
-
 			"ssl", "crypto"
 		}
 

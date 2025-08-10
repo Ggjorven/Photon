@@ -1,5 +1,5 @@
-Dependencies = local_require("../../Dependencies.lua")
-MacOSVersion = MacOSVersion or "14.5"
+local Dependencies = local_require("../../Dependencies.lua")
+local MacOSVersion = MacOSVersion or "14.5"
 
 project "protobuf"
 	kind "StaticLib"
@@ -46,14 +46,10 @@ project "protobuf"
 		"protobuf/src/google",
 
 		"protobuf/third_party/utf8_range",
-
-		"%{Dependencies.Abseil.IncludeDir}"
     }
 
-	links
-	{
-		"%{Dependencies.Abseil.LibName}"
-	}
+	includedirs(Dependencies.Abseil.IncludeDir)
+	links(Dependencies.Abseil.LibName)
 
 	defines
 	{
@@ -147,14 +143,10 @@ project "protoc"
 
 		"protobuf/upb_generator",
 		"protobuf/third_party/utf8_range",
-
-		"%{Dependencies.Abseil.IncludeDir}"
     }
 
-	links
-	{
-		"%{Dependencies.ProtoBuf.LibName}", -- Includes Abseil
-	}
+	includedirs(Dependencies.Abseil.IncludeDir)
+	links(Dependencies.ProtoBuf.LibName) -- Includes Abseil
 
 	defines
 	{
@@ -176,10 +168,7 @@ project "protoc"
 		systemversion "latest"
 		staticruntime "On"
 
-		links
-		{
-			"%{Dependencies.Abseil.LibName}"
-		}
+		links(Dependencies.Abseil.LibName)
 
 	filter "system:macosx"
 		systemversion(MacOSVersion)

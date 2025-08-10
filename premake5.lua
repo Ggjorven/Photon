@@ -2,8 +2,7 @@
 -- Utils
 ------------------------------------------------------------------------------
 function local_require(path)
-	local chunk = assert(loadfile(path))
-	return chunk()  -- run the chunk, capturing the returned table
+	return dofile(path)
 end
 ------------------------------------------------------------------------------
 

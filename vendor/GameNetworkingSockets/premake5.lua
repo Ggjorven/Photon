@@ -1,5 +1,5 @@
-Dependencies = local_require("../../Dependencies.lua")
-MacOSVersion = MacOSVersion or "14.5"
+local Dependencies = local_require("../../Dependencies.lua")
+local MacOSVersion = MacOSVersion or "14.5"
 
 project "GameNetworkingSockets"
 	dependson "protoc"
@@ -72,12 +72,14 @@ project "GameNetworkingSockets"
 		"GameNetworkingSockets/src/external",
 		"GameNetworkingSockets/src/external/webrtc",
 		"GameNetworkingSockets/src/external/picojson",
-
-		"%{Dependencies.OpenSSL.IncludeDir}",
-		"%{Dependencies.ProtoBuf.IncludeDir}",
-		"%{Dependencies.ProtoBuf.IncludeDir}/../third_party/utf8_range",
-		"%{Dependencies.Abseil.IncludeDir}",
     }
+
+	includedirs(Dependencies.OpenSSL.IncludeDir)
+	includedirs(Dependencies.ProtoBuf.IncludeDir)
+	includedirs(Dependencies.ProtoBuf.IncludeDir .. "/../third_party/utf8_range")
+	includedirs(Dependencies.Abseil.IncludeDir)
+	
+	links(Dependencies.ProtoBuf.LibName)
 
 	defines
 	{
@@ -89,16 +91,10 @@ project "GameNetworkingSockets"
 		"STEAMNETWORKINGSOCKETS_STATIC_LINK",
 	}
 
-	links
-	{
-		"%{Dependencies.ProtoBuf.LibName}"
-	}
-
 	filter "system:windows"
 		systemversion "latest"
 		staticruntime "On"
 
-		includedirs("%{wks.location}/vendor/OpenSSL/windows/include")
 		defines("WEBRTC_WIN")
 
 		defines 
@@ -113,10 +109,7 @@ project "GameNetworkingSockets"
 
 		defines("WEBRTC_POSIX")
 
-		links
-		{
-			"%{Dependencies.Abseil.LibName}",
-		}
+		links(Dependencies.Abseil.LibName)
 
 	filter "system:macosx"
 		systemversion(MacOSVersion)

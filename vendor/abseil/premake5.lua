@@ -1,5 +1,5 @@
-Dependencies = local_require("../../Dependencies.lua")
-MacOSVersion = MacOSVersion or "14.5"
+local Dependencies = local_require("../../Dependencies.lua")
+local MacOSVersion = MacOSVersion or "14.5"
 
 project "abseil"
 	kind "StaticLib"
