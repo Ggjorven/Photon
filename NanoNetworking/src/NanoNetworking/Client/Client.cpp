@@ -155,6 +155,7 @@ namespace Nano::Networking
 			if (!GameNetworkingSockets_Init(nullptr, errMsg))
 			{
 				info.Status = ConnectionStatus::FailedToInitialize;
+				promise.set_value();
 				return;
 			}
 
@@ -167,6 +168,7 @@ namespace Nano::Networking
 			if (!address.ParseString(info.IpAddress.c_str()))
 			{
 				info.Status = ConnectionStatus::InvalidIP;
+				promise.set_value();
 				return;
 			}
 		}
@@ -181,6 +183,7 @@ namespace Nano::Networking
 			if (m_Connection == k_HSteamNetConnection_Invalid)
 			{
 				info.Status = ConnectionStatus::FailedToConnect;
+				promise.set_value();
 				return;
 			}
 		}
@@ -195,10 +198,7 @@ namespace Nano::Networking
 			PollConnectionStateChanges();
 			std::this_thread::sleep_for(std::chrono::milliseconds(pollingRateMs));
 		}
-
-		// Connected
-		if (info.Status == ConnectionStatus::Connected)
-			promise.set_value(); // Notify ConnectionInfo that we're connected
+		promise.set_value();
 
 		// Poll message while connected
 		while (info.Status == ConnectionStatus::Connected)

@@ -111,14 +111,18 @@ namespace Nano::Networking
 	////////////////////////////////////////////////////////////////////////////////////
 	// Methods
 	////////////////////////////////////////////////////////////////////////////////////
-	void Server::Start(uint16_t port, uint64_t pollingRateMs)
+	const ServerInfo& Server::Start(uint16_t port, uint64_t pollingRateMs)
 	{
-		m_NetworkThread = std::thread([this, port, pollingRateMs]() { Thread(port, pollingRateMs); });
+		std::promise<void> promise;
+		m_Info.m_InitWaiting = promise.get_future();
+
+		m_NetworkThread = std::thread([this, promise = std::move(promise), port, pollingRateMs]() mutable { Thread(m_Info, std::move(promise), port, pollingRateMs); });
+		return m_Info;
 	}
 
 	void Server::Stop()
 	{
-		m_Status = ServerStatus::Down;
+		m_Info.Status = ServerStatus::Down;
 	}
 
 	void Server::KickClient(ClientID clientID, const std::string& reason)
@@ -155,16 +159,17 @@ namespace Nano::Networking
 	////////////////////////////////////////////////////////////////////////////////////
 	// Private methods
 	////////////////////////////////////////////////////////////////////////////////////
-	void Server::Thread(uint16_t port, uint64_t pollingRateMs)
+	void Server::Thread(ServerInfo& info, std::promise<void>&& promise, uint16_t port, uint64_t pollingRateMs)
 	{
 		// Initialize
 		{
-			m_Status = ServerStatus::Initializing;
+			info.Status = ServerStatus::Initializing;
 
 			SteamDatagramErrMsg errMsg;
 			if (!GameNetworkingSockets_Init(nullptr, errMsg))
 			{
-				m_Status = ServerStatus::FailedToInitialize;
+				info.Status = ServerStatus::FailedToInitialize;
+				promise.set_value();
 				return;
 			}
 
@@ -185,8 +190,9 @@ namespace Nano::Networking
 
 			if (m_ListenSocket == k_HSteamListenSocket_Invalid)
 			{
-				m_Status = ServerStatus::FailedToListen;
+				info.Status = ServerStatus::FailedToListen;
 				CallCallback(m_User.MessageCallback, m_User.Data, MessageType::Error, std::format("Failed to listen on port: {0}", port));
+				promise.set_value();
 				return;
 			}
 		}
@@ -196,8 +202,9 @@ namespace Nano::Networking
 			m_PollGroup = m_Interface->CreatePollGroup();
 			if (m_PollGroup == k_HSteamNetPollGroup_Invalid)
 			{
-				m_Status = ServerStatus::FailedToListen;
+				info.Status = ServerStatus::FailedToListen;
 				CallCallback(m_User.MessageCallback, m_User.Data, MessageType::Error, std::format("Failed to listen on port: {0}", port));
+				promise.set_value();
 				return;
 			}
 
@@ -205,10 +212,11 @@ namespace Nano::Networking
 		}
 
 		s_SocketToServer[m_ListenSocket] = this;
-		m_Status = ServerStatus::Up;
+		info.Status = ServerStatus::Up;
+		promise.set_value();
 
 		// Poll messages while up
-		while (m_Status == ServerStatus::Up)
+		while (info.Status == ServerStatus::Up)
 		{
 			PollIncomingMessages();
 			PollConnectionStateChanges();
@@ -228,7 +236,7 @@ namespace Nano::Networking
 		m_Interface->DestroyPollGroup(m_PollGroup);
 		m_PollGroup = k_HSteamNetPollGroup_Invalid;
 		s_SocketToServer.erase(m_ListenSocket);
-		//m_Status = ServerStatus::Down;
+		//info.Status = ServerStatus::Down;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -236,7 +244,7 @@ namespace Nano::Networking
 	////////////////////////////////////////////////////////////////////////////////////
 	void Server::PollIncomingMessages()
 	{
-		while (m_Status == ServerStatus::Up)
+		while (m_Info.Status == ServerStatus::Up)
 		{
 			ISteamNetworkingMessage* incomingMessage = nullptr;
 			int messageCount = m_Interface->ReceiveMessagesOnPollGroup(m_PollGroup, &incomingMessage, 1);

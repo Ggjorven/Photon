@@ -30,6 +30,30 @@ namespace Nano::Networking
 	};
 
 	////////////////////////////////////////////////////////////////////////////////////
+	// ServerInfo
+	////////////////////////////////////////////////////////////////////////////////////
+	class ServerInfo // Note: A wrapper around a future with some nice to have getters
+	{
+	public:
+		ServerStatus Status = ServerStatus::Down;
+
+	public:
+		// Methods
+		inline void Wait() const { m_InitWaiting.wait(); }
+		inline void WaitFor(uint64_t milliseconds) const { m_InitWaiting.wait_for(std::chrono::milliseconds(milliseconds)); }
+
+		inline bool IsDone() const { return m_InitWaiting.valid(); }
+
+		// Getters
+		inline bool Failed() const { return ((Status == ServerStatus::FailedToInitialize) || (Status == ServerStatus::FailedToListen) || (Status == ServerStatus::Down)); }
+
+	private:
+		std::future<void> m_InitWaiting;
+
+		friend class Server;
+	};
+
+	////////////////////////////////////////////////////////////////////////////////////
 	// Server
 	////////////////////////////////////////////////////////////////////////////////////
 	class Server
@@ -48,7 +72,7 @@ namespace Nano::Networking
 		~Server();
 
 		// Methods
-		void Start(uint16_t port, uint64_t pollingRateMs = 10);
+		const ServerInfo& Start(uint16_t port, uint64_t pollingRateMs = 10);
 		void Stop();
 
 		void KickClient(ClientID clientID, const std::string& reason = "Kicked by host");
@@ -74,14 +98,14 @@ namespace Nano::Networking
 		inline void SetMessageCallback(const MessageCallbackFn& function) { m_User.MessageCallback = function; }
 
 		// Getters
-		inline ServerStatus GetStatus() const { return m_Status; }
-		inline bool IsUp() const { return (m_Status == ServerStatus::Up); }
+		inline ServerStatus GetStatus() const { return m_Info.Status; }
+		inline bool IsUp() const { return (m_Info.Status == ServerStatus::Up); }
 
 		inline std::map<ClientID, ClientInfo> GetConnectedClients() const { return m_ConnectedClients; }
 
 	private:
 		// Private methods
-		void Thread(uint16_t port, uint64_t pollingRateMs);
+		void Thread(ServerInfo& info, std::promise<void>&& promise, uint16_t port, uint64_t pollingRateMs);
 
 		// Polling methods
 		void PollIncomingMessages();
@@ -105,7 +129,7 @@ namespace Nano::Networking
 			MessageCallbackFn MessageCallback;
 		} m_User;
 
-		ServerStatus m_Status = ServerStatus::Down;
+		ServerInfo m_Info = {};
 
 		std::map<ClientID, ClientInfo> m_ConnectedClients;
 
