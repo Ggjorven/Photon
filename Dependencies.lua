@@ -5,27 +5,27 @@ local Dependencies =
 {
 	Nano = 
 	{
-		IncludeDir = "%{wks.location}/vendor/Nano/Nano/Nano/include"
+		IncludeDir = this_directory() .. "/vendor/Nano/Nano/Nano/include"
 	},
 	GameNetworkingSockets =
 	{
 		LibName = "GameNetworkingSockets",
 		IncludeDirs = { 
-			"%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/include", 
-			"%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src", 
-			"%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/public", 
+			this_directory() .. "/vendor/GameNetworkingSockets/GameNetworkingSockets/include", 
+			this_directory() .. "/vendor/GameNetworkingSockets/GameNetworkingSockets/src", 
+			this_directory() .. "/vendor/GameNetworkingSockets/GameNetworkingSockets/src/public", 
 		},
 	},
 
 	OpenSSL = {}, -- Note: On linux/macos, these are systemwide includes
 	ProtoBuf = 
 	{
-		IncludeDir = "%{wks.location}/vendor/protobuf/protobuf/src",
+		IncludeDir = this_directory() .. "/vendor/protobuf/protobuf/src",
 		LibName = "protobuf"
 	},
 	Abseil = 
 	{
-		IncludeDir = "%{wks.location}/vendor/abseil/abseil",
+		IncludeDir = this_directory() .. "/vendor/abseil/abseil",
 		LibName = "abseil"
 	},
 }
@@ -37,8 +37,8 @@ local Dependencies =
 if os.target() == "windows" then
 	Dependencies.OpenSSL = 
 	{
-		IncludeDir = "%{wks.location}/vendor/OpenSSL/windows/include",
-        LibDir = "%{wks.location}/vendor/OpenSSL/windows/lib",
+		IncludeDir = this_directory() .. "/vendor/OpenSSL/windows/include",
+        LibDir = this_directory() .. "/vendor/OpenSSL/windows/lib",
 		LibNames = {
 			"libcrypto",
 			"libssl"

@@ -16,9 +16,9 @@ project "GameNetworkingSockets"
 	prebuildcommands
 	{
 		-- targetdir ("%{wks.location}/bin/" .. OutputDir .. "/%{prj.name}")
-		'%{wks.location}/bin/' .. OutputDir .. '/protoc/protoc' .. ' --proto_path=%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/common' .. ' --cpp_out=%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/common' .. ' %{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/common/steamnetworkingsockets_messages.proto',
-		'%{wks.location}/bin/' .. OutputDir .. '/protoc/protoc' .. ' --proto_path=%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/common' .. ' --cpp_out=%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/common' .. ' %{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/common/steamnetworkingsockets_messages_udp.proto',
-		'%{wks.location}/bin/' .. OutputDir .. '/protoc/protoc' .. ' --proto_path=%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/common' .. ' --cpp_out=%{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/common' .. ' %{wks.location}/vendor/GameNetworkingSockets/GameNetworkingSockets/src/common/steamnetworkingsockets_messages_certs.proto',
+		'%{wks.location}/bin/' .. OutputDir .. '/protoc/protoc' .. ' --proto_path=' .. this_directory() .. '/GameNetworkingSockets/src/common' .. ' --cpp_out=' .. this_directory() .. '/GameNetworkingSockets/src/common' .. ' ' .. this_directory() .. '/GameNetworkingSockets/src/common/steamnetworkingsockets_messages.proto',
+		'%{wks.location}/bin/' .. OutputDir .. '/protoc/protoc' .. ' --proto_path=' .. this_directory() .. '/GameNetworkingSockets/src/common' .. ' --cpp_out=' .. this_directory() .. '/GameNetworkingSockets/src/common' .. ' ' .. this_directory() .. '/GameNetworkingSockets/src/common/steamnetworkingsockets_messages_udp.proto',
+		'%{wks.location}/bin/' .. OutputDir .. '/protoc/protoc' .. ' --proto_path=' .. this_directory() .. '/GameNetworkingSockets/src/common' .. ' --cpp_out=' .. this_directory() .. '/GameNetworkingSockets/src/common' .. ' ' .. this_directory() .. '/GameNetworkingSockets/src/common/steamnetworkingsockets_messages_certs.proto',
 	}
 
 	files
