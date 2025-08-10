@@ -1,3 +1,6 @@
+-- Note: This is the premake5 file made to allow for using
+-- NanoNetworking as a submodule/dependency without the main workspace.
+
 ------------------------------------------------------------------------------
 -- Utils
 ------------------------------------------------------------------------------
@@ -34,31 +37,11 @@ end)
 local MacOSVersion = "14.5"
 local OutputDir = "%{cfg.buildcfg}-%{cfg.system}"
 
-workspace "NanoNetworking"
-	architecture "x86_64"
-	startproject "Sandbox"
-
-	configurations
-	{
-		"Debug",
-		"Release",
-		"Dist"
-	}
-
-	flags
-	{
-		"MultiProcessorCompile"
-	}
-
 group "Dependencies"
 	include "vendor/GameNetworkingSockets"
 	include "vendor/protobuf"
 	include "vendor/abseil"
-group ""
 
-group "NanoNetworking"
 	include "NanoNetworking"
 group ""
-
-include "Sandbox"
 ------------------------------------------------------------------------------

@@ -1,5 +1,6 @@
 local Dependencies = local_require("../../Dependencies.lua")
 local MacOSVersion = MacOSVersion or "14.5"
+local OutputDir = OutputDir or "%{cfg.buildcfg}-%{cfg.system}"
 
 project "protobuf"
 	kind "StaticLib"
@@ -8,8 +9,8 @@ project "protobuf"
 	-- staticruntime "Off"
 	warnings "Off"
 
-	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
+	targetdir ("%{wks.location}/bin/" .. OutputDir .. "/%{prj.name}")
+	objdir ("%{wks.location}/bin-int/" .. OutputDir .. "/%{prj.name}")
 
 	files
 	{
@@ -98,8 +99,8 @@ project "protoc"
 	-- staticruntime "Off"
 	warnings "Off"
 
-	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
+	targetdir ("%{wks.location}/bin/" .. OutputDir .. "/%{prj.name}")
+	objdir ("%{wks.location}/bin-int/" .. OutputDir .. "/%{prj.name}")
 
 	files
 	{
