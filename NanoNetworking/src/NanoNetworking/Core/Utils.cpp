@@ -11,7 +11,7 @@
 #if defined(NANO_PLATFORM_WINDOWS)
 	#include <WinSock2.h>
 	#include <ws2tcpip.h>
-#elif defined(NANO_PLATFORM_UNIX)
+#elif defined(NANO_PLATFORM_POSIX)
 	#include <sys/types.h>
 	#include <sys/socket.h>
 	#include <netdb.h>
@@ -116,7 +116,7 @@ namespace Nano::Networking::Utils
 
 		freeaddrinfo(addressResult);
 		WSACleanup();
-#else
+#elif defined(NANO_PLATFORM_POSIX)
 		addrinfo hints = {};
 		hints.ai_family = AF_UNSPEC;
 		hints.ai_socktype = SOCK_STREAM;
@@ -151,7 +151,7 @@ namespace Nano::Networking::Utils
 		freeaddrinfo(res);
 #endif
 
-		return port.empty() ? ipAddressStr : (ipAddressStr + ":" + port);
+		return (port.empty() ? ipAddressStr : (ipAddressStr + ":" + port));
 	}
 
 }
