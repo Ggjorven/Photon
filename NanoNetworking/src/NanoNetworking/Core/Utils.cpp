@@ -12,11 +12,13 @@
 	#include <WinSock2.h>
 	#include <ws2tcpip.h>
 #elif defined(NANO_PLATFORM_UNIX)
-	#include <sys/types.h>      
-	#include <sys/socket.h>     
-	#include <netdb.h>          
-	#include <netinet/in.h>     
-	#include <arpa/inet.h>      
+	#include <sys/types.h>
+	#include <sys/socket.h>
+	#include <netdb.h>
+	#include <netinet/in.h>
+	#include <arpa/inet.h>
+#else
+	#error NanoNetworking Utils: Utilities include not defined for this platform.
 #endif
 
 namespace Nano::Networking::Utils
