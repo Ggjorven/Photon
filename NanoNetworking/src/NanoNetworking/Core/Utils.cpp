@@ -29,7 +29,7 @@ namespace Nano::Networking::Utils
 	{
 		std::string ipAddressStr(ipAddress.data(), ipAddress.size());
 
-		SteamNetworkingIPAddr address;
+		SteamNetworkingIPAddr address = {};
 		return address.ParseString(ipAddressStr.c_str());
 	}
 
