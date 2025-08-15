@@ -40,13 +40,14 @@ project "NanoNetworking"
 		"src/NanoNetworking",
 	}
 
-	includedirs(Dependencies.Combined.IncludeDirs)
+	includedirs(Dependencies.ProtoBuf.IncludeDir)
+	includedirs(Dependencies.Abseil.IncludeDir)
+	includedirs(Dependencies.GameNetworkingSockets.IncludeDir)
+	includedirs(Dependencies.Nano.IncludeDir)
+
 	links(Dependencies.GameNetworkingSockets.LibName)
 
 	filter "system:windows"
-		defines "NN_PLATFORM_DESKTOP"
-		defines "NN_PLATFORM_WINDOWS"
-		defines "NN_PLATFORM_UNIX"
 		systemversion "latest"
 		staticruntime "on"
 
@@ -54,34 +55,20 @@ project "NanoNetworking"
         {
             "NOMINMAX"
         }
-
-		links
-		{
-			"ws2_32.lib"
-		}
-
+		
+		includedirs(Dependencies.OpenSSL.IncludeDir)
 		libdirs(Dependencies.OpenSSL.LibDir)
-		links(Dependencies.OpenSSL.LibNames)
+		links(Dependencies.OpenSSL.LibName)
 
 	filter "system:linux"
-		defines "NN_PLATFORM_DESKTOP"
-		defines "NN_PLATFORM_LINUX"
 		systemversion "latest"
 		staticruntime "on"
 
 		links(Dependencies.ProtoBuf.LibName)
 		links(Dependencies.Abseil.LibName)
-
-		links
-		{
-			"openssl"
-		}
+		links(Dependencies.OpenSSL.LibName)
 
     filter "system:macosx"
-		defines "NN_PLATFORM_DESKTOP"
-		defines "NN_PLATFORM_MACOS"
-		defines "NN_PLATFORM_UNIX"
-		defines "NN_PLATFORM_APPLE"
 		systemversion(MacOSVersion)
 		staticruntime "on"
 
@@ -102,11 +89,13 @@ project "NanoNetworking"
 		symbols "on"
 		
 	filter "configurations:Release"
+		defines "NDEBUG"
 		defines "NN_CONFIG_RELEASE"
 		runtime "Release"
 		optimize "on"
 
 	filter "configurations:Dist"
+		defines "NDEBUG"
 		defines "NN_CONFIG_DIST"
 		runtime "Release"
 		optimize "Full"

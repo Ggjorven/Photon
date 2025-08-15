@@ -131,10 +131,12 @@ project "GameNetworkingSockets"
 		symbols "On"
 
 	filter "configurations:Release"
+		defines "NDEBUG"
 		runtime "Release"
 		optimize "On"
 
 	filter "configurations:Dist"
+		defines "NDEBUG"
 		runtime "Release"
 		optimize "Full"
 		linktimeoptimization "On"

@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "NanoNetworking/Core/Core.hpp"
 #include "NanoNetworking/Core/Utils.hpp"
 

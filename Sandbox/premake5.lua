@@ -38,7 +38,10 @@ project "Sandbox"
 		"%{wks.location}/NanoNetworking/src",
 	}
 
-	includedirs(Dependencies.Combined.IncludeDirs)
+	includedirs(Dependencies.ProtoBuf.IncludeDir)
+	includedirs(Dependencies.Abseil.IncludeDir)
+	includedirs(Dependencies.GameNetworkingSockets.IncludeDir)
+	includedirs(Dependencies.Nano.IncludeDir)
 
 	links
 	{
@@ -46,8 +49,6 @@ project "Sandbox"
 	}
 
 	filter "system:windows"
-		defines "NN_PLATFORM_DESKTOP"
-		defines "NN_PLATFORM_WINDOWS"
 		systemversion "latest"
 		staticruntime "on"
 
@@ -56,33 +57,18 @@ project "Sandbox"
             "NOMINMAX"
         }
 
-		postbuildcommands
-		{
-			'{COPYFILE} "' .. Dependencies.OpenSSL.IncludeDir .. '/../bin/' .. Dependencies.OpenSSL.DllName .. '" "%{cfg.targetdir}"',
-			'{COPYFILE} "' .. Dependencies.OpenSSL.IncludeDir .. '/../bin/' .. Dependencies.OpenSSL.DllName .. '" "%{prj.location}"' -- Note: This is the debugdir
-		}
+		postbuildcommands(Dependencies.OpenSSL.PostBuildCommands)
 
 	filter "system:linux"
-		defines "NN_PLATFORM_DESKTOP"
-		defines "NN_PLATFORM_LINUX"
-		defines "NN_PLATFORM_UNIX"
 		systemversion "latest"
 		staticruntime "on"
 
 		links(Dependencies.GameNetworkingSockets.LibName)
 		links(Dependencies.ProtoBuf.LibName)
 		links(Dependencies.Abseil.LibName)
-		
-		links
-		{
-			"ssl", "crypto"
-		}
+		links(Dependencies.OpenSSL.LibName)
 
     filter "system:macosx"
-		defines "NN_PLATFORM_DESKTOP"
-		defines "NN_PLATFORM_MACOS"
-		defines "NN_PLATFORM_UNIX"
-		defines "NN_PLATFORM_APPLE"
 		systemversion(MacOSVersion)
 		staticruntime "on"
 
@@ -100,11 +86,13 @@ project "Sandbox"
 		symbols "on"
 		
 	filter "configurations:Release"
+		defines "NDEBUG"
 		defines "NN_CONFIG_RELEASE"
 		runtime "Release"
 		optimize "on"
 
 	filter "configurations:Dist"
+		defines "NDEBUG"
 		defines "NN_CONFIG_DIST"
 		runtime "Release"
 		optimize "Full"

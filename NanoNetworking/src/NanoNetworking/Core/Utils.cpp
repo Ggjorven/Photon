@@ -8,10 +8,10 @@
 
 #include <format>
 
-#if defined(NN_PLATFORM_WINDOWS)
+#if defined(NANO_PLATFORM_WINDOWS)
 	#include <WinSock2.h>
 	#include <ws2tcpip.h>
-#elif defined(NN_PLATFORM_LINUX) || defined(NN_PLATFORM_MACOS) 
+#elif defined(NANO_PLATFORM_UNIX)
 	#include <sys/types.h>      
 	#include <sys/socket.h>     
 	#include <netdb.h>          
@@ -51,7 +51,7 @@ namespace Nano::Networking::Utils
 			port = domainAndPort[1];
 		}
 
-#if defined(NN_PLATFORM_WINDOWS)
+#if defined(NANO_PLATFORM_WINDOWS)
 		// Adapted from example at https://learn.microsoft.com/en-us/windows/win32/api/ws2tcpip/nf-ws2tcpip-getaddrinfo
 		WSADATA wsaData;
 		int wsaFailed = WSAStartup(MAKEWORD(2, 2), &wsaData);
