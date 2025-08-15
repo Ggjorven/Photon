@@ -40,10 +40,7 @@ project "NanoNetworking"
 		"src/NanoNetworking",
 	}
 
-	includedirs(Dependencies.ProtoBuf.IncludeDir)
-	includedirs(Dependencies.Abseil.IncludeDir)
-	includedirs(Dependencies.GameNetworkingSockets.IncludeDir)
-	includedirs(Dependencies.Nano.IncludeDir)
+	includedirs(Dependencies.NanoNetworking.IncludeDir)
 
 	links(Dependencies.GameNetworkingSockets.LibName)
 
@@ -56,7 +53,6 @@ project "NanoNetworking"
             "NOMINMAX"
         }
 		
-		includedirs(Dependencies.OpenSSL.IncludeDir)
 		libdirs(Dependencies.OpenSSL.LibDir)
 		links(Dependencies.OpenSSL.LibName)
 
@@ -64,9 +60,8 @@ project "NanoNetworking"
 		systemversion "latest"
 		staticruntime "on"
 
-		links(Dependencies.ProtoBuf.LibName)
-		links(Dependencies.Abseil.LibName)
-		links(Dependencies.OpenSSL.LibName)
+		-- Linux needs a backwards linking again for some reason
+		links(remove_from_table(remove_from_table(copy_table(Dependencies.NanoNetworking.LibName), "NanoNetworking"), "GameNetworkingSockets"))
 
     filter "system:macosx"
 		systemversion(MacOSVersion)

@@ -38,10 +38,7 @@ project "Sandbox"
 		"%{wks.location}/NanoNetworking/src",
 	}
 
-	includedirs(Dependencies.ProtoBuf.IncludeDir)
-	includedirs(Dependencies.Abseil.IncludeDir)
-	includedirs(Dependencies.GameNetworkingSockets.IncludeDir)
-	includedirs(Dependencies.Nano.IncludeDir)
+	includedirs(Dependencies.NanoNetworking.IncludeDir)
 
 	links
 	{
@@ -57,16 +54,14 @@ project "Sandbox"
             "NOMINMAX"
         }
 
-		postbuildcommands(Dependencies.OpenSSL.PostBuildCommands)
+		postbuildcommands(Dependencies.NanoNetworking.PostBuildCommands)
 
 	filter "system:linux"
 		systemversion "latest"
 		staticruntime "on"
 
-		links(Dependencies.GameNetworkingSockets.LibName)
-		links(Dependencies.ProtoBuf.LibName)
-		links(Dependencies.Abseil.LibName)
-		links(Dependencies.OpenSSL.LibName)
+		-- Linux needs a backwards linking again for some reason
+		links(remove_from_table(copy_table(Dependencies.NanoNetworking.LibName), "NanoNetworking"))
 
     filter "system:macosx"
 		systemversion(MacOSVersion)

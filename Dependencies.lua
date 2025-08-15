@@ -10,6 +10,44 @@ local function this_directory()
 	local path = str:match("(.*/)")
     return path:gsub("\\", "/") -- Replace \\ with /
 end
+
+function append_to_table(dest, value)
+	if type(value) == "table" then
+		for _, v in ipairs(value) do
+        	table.insert(dest, v)
+    	end
+    else
+		table.insert(dest, value)
+    end
+
+	return dest
+end
+
+function remove_from_table(dest, filter)
+    for i = #dest, 1, -1 do  -- Iterate backwards
+        local value = dest[i]
+
+		-- Note: Allows lua patterns
+        if string.find(value, filter) ~= nil then
+            table.remove(dest, i)
+        end
+    end
+
+	return dest
+end
+
+function copy_table(tbl)
+    if type(tbl) ~= "table" then 
+		return tbl 
+	end
+
+    local copy = {}
+    for k, v in pairs(tbl) do
+        copy[k] = copy_table(v)
+    end
+	
+    return copy
+end
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
@@ -17,6 +55,7 @@ end
 ------------------------------------------------------------------------------
 local Dependencies =
 {
+	-- Internal Dependencies
 	Nano = 
 	{
 		IncludeDir = this_directory() .. "/vendor/Nano/Nano/Nano/include"
@@ -32,7 +71,12 @@ local Dependencies =
 		},
 	},
 
-	OpenSSL = {}, -- Note: On linux/macos, these are systemwide includes
+	OpenSSL = 
+	{
+		-- Note: On linux/macos, these are systemwide includes
+		IncludeDir = {},
+		LibName = {},
+	}, 
 	ProtoBuf = 
 	{
 		IncludeDir = this_directory() .. "/vendor/protobuf/protobuf/src",
@@ -42,6 +86,14 @@ local Dependencies =
 	{
 		IncludeDir = this_directory() .. "/vendor/abseil/abseil",
 		LibName = "abseil"
+	},
+
+	-- Export Dependencies (Note: Makes using as submodule easier.)
+	NanoNetworking = 
+	{
+		IncludeDir = {},
+		LibName = {},
+		PostBuildCommands = {},
 	},
 }
 ------------------------------------------------------------------------------
@@ -61,16 +113,15 @@ if os.target() == "windows" then
 
 			"ws2_32.lib"
 		},
-		DllName = "libcrypto-3-x64.dll",
 		PostBuildCommands = {},
 	}
 
 	Dependencies.OpenSSL.PostBuildCommands = 
 	{
-		'{COPYFILE} "' .. Dependencies.OpenSSL.IncludeDir .. '/../bin/' .. Dependencies.OpenSSL.DllName .. '" "%{cfg.targetdir}"',
-		'{COPYFILE} "' .. Dependencies.OpenSSL.IncludeDir .. '/../bin/' .. Dependencies.OpenSSL.DllName .. '" "%{prj.location}"' -- Note: This is the debugdir most of the time
+		'{COPYFILE} "' .. Dependencies.OpenSSL.IncludeDir .. '/../bin/libcrypto-3-x64.dll" "%{cfg.targetdir}"',
+		'{COPYFILE} "' .. Dependencies.OpenSSL.IncludeDir .. '/../bin/libcrypto-3-x64.dll" "%{prj.location}"' -- Note: This is the debugdir most of the time
 	}
-elseif os.target() == "linux" then
+elseif os.target() == "linux" or os.target() == "macosx" then
 	Dependencies.OpenSSL = 
 	{
 		LibName = 
@@ -79,39 +130,31 @@ elseif os.target() == "linux" then
 			"crypro"
 		},
 	}
-else
-	error("TODO: Other platforms")
 end
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
--- Merge
+-- Export Dependencies
 ------------------------------------------------------------------------------
-Dependencies.Combined =
-{
-    IncludeDir = {},
-    LibName = {},
-    LibDir = {}
-}
+-- IncludeDirs
+append_to_table(Dependencies.NanoNetworking.IncludeDir, Dependencies.ProtoBuf.IncludeDir)
+append_to_table(Dependencies.NanoNetworking.IncludeDir, Dependencies.Abseil.IncludeDir)
+append_to_table(Dependencies.NanoNetworking.IncludeDir, Dependencies.GameNetworkingSockets.IncludeDir)
+append_to_table(Dependencies.NanoNetworking.IncludeDir, Dependencies.Nano.IncludeDir)
+append_to_table(Dependencies.NanoNetworking.IncludeDir, Dependencies.OpenSSL.IncludeDir)
 
-for name, dep in pairs(Dependencies) do
-    if name ~= "Combined" then
-        -- IncludeDirs
-        if dep.IncludeDir then
-            table.insert(Dependencies.Combined.IncludeDir, dep.IncludeDir)
-        end
-        
-        -- LibNames
-        if dep.LibName then
-            table.insert(Dependencies.Combined.LibName, dep.LibName)
-        end
+-- LibNames
+append_to_table(Dependencies.NanoNetworking.LibName, "NanoNetworking")
 
-        -- LibDirs
-        if dep.LibDir then
-            table.insert(Dependencies.Combined.LibDir, dep.LibDir)
-        end
-    end
+if os.target() == "linux" then
+	append_to_table(Dependencies.NanoNetworking.LibName, Dependencies.GameNetworkingSockets.LibName)
+	append_to_table(Dependencies.NanoNetworking.LibName, Dependencies.ProtoBuf.LibName)
+	append_to_table(Dependencies.NanoNetworking.LibName, Dependencies.Abseil.LibName)
+	append_to_table(Dependencies.NanoNetworking.LibName, Dependencies.OpenSSL.LibName)
 end
+
+-- PostBuildCommands
+append_to_table(Dependencies.NanoNetworking.PostBuildCommands, Dependencies.OpenSSL.PostBuildCommands)
 ------------------------------------------------------------------------------
 
 return Dependencies
