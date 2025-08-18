@@ -32,11 +32,8 @@ end)
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
--- Solution
+-- Projects
 ------------------------------------------------------------------------------
-local MacOSVersion = "14.5"
-local OutputDir = "%{cfg.buildcfg}-%{cfg.system}"
-
 group "Dependencies"
 	include "vendor/GameNetworkingSockets"
 	include "vendor/protobuf"

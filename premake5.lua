@@ -37,8 +37,8 @@ end)
 ------------------------------------------------------------------------------
 -- Solution
 ------------------------------------------------------------------------------
-local MacOSVersion = "14.5"
-local OutputDir = "%{cfg.buildcfg}-%{cfg.system}"
+MacOSVersion = "14.5"
+OutputDir = "%{cfg.buildcfg}-%{cfg.system}"
 
 workspace "NanoNetworking"
 	architecture "x86_64"
