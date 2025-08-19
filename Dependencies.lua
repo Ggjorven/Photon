@@ -137,6 +137,7 @@ end
 -- Export Dependencies
 ------------------------------------------------------------------------------
 -- IncludeDirs
+append_to_table(Dependencies.Photon.IncludeDir, this_directory() .. "Photon/src/")
 append_to_table(Dependencies.Photon.IncludeDir, Dependencies.ProtoBuf.IncludeDir)
 append_to_table(Dependencies.Photon.IncludeDir, Dependencies.Abseil.IncludeDir)
 append_to_table(Dependencies.Photon.IncludeDir, Dependencies.GameNetworkingSockets.IncludeDir)
