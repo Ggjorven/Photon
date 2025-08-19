@@ -40,7 +40,7 @@ end)
 MacOSVersion = "14.5"
 OutputDir = "%{cfg.buildcfg}-%{cfg.system}"
 
-workspace "NanoNetworking"
+workspace "Photon"
 	architecture "x86_64"
 	startproject "Sandbox"
 
@@ -62,8 +62,8 @@ group "Dependencies"
 	include "vendor/abseil"
 group ""
 
-group "NanoNetworking"
-	include "NanoNetworking"
+group "Photon"
+	include "Photon"
 group ""
 
 include "Sandbox"

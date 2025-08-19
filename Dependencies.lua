@@ -89,7 +89,7 @@ local Dependencies =
 	},
 
 	-- Export Dependencies (Note: Makes using as submodule easier.)
-	NanoNetworking = 
+	Photon = 
 	{
 		IncludeDir = {},
 		LibName = {},
@@ -137,24 +137,24 @@ end
 -- Export Dependencies
 ------------------------------------------------------------------------------
 -- IncludeDirs
-append_to_table(Dependencies.NanoNetworking.IncludeDir, Dependencies.ProtoBuf.IncludeDir)
-append_to_table(Dependencies.NanoNetworking.IncludeDir, Dependencies.Abseil.IncludeDir)
-append_to_table(Dependencies.NanoNetworking.IncludeDir, Dependencies.GameNetworkingSockets.IncludeDir)
-append_to_table(Dependencies.NanoNetworking.IncludeDir, Dependencies.Nano.IncludeDir)
-append_to_table(Dependencies.NanoNetworking.IncludeDir, Dependencies.OpenSSL.IncludeDir)
+append_to_table(Dependencies.Photon.IncludeDir, Dependencies.ProtoBuf.IncludeDir)
+append_to_table(Dependencies.Photon.IncludeDir, Dependencies.Abseil.IncludeDir)
+append_to_table(Dependencies.Photon.IncludeDir, Dependencies.GameNetworkingSockets.IncludeDir)
+append_to_table(Dependencies.Photon.IncludeDir, Dependencies.Nano.IncludeDir)
+append_to_table(Dependencies.Photon.IncludeDir, Dependencies.OpenSSL.IncludeDir)
 
 -- LibNames
-append_to_table(Dependencies.NanoNetworking.LibName, "NanoNetworking")
+append_to_table(Dependencies.Photon.LibName, "Photon")
 
 if os.target() == "linux" then
-	append_to_table(Dependencies.NanoNetworking.LibName, Dependencies.GameNetworkingSockets.LibName)
-	append_to_table(Dependencies.NanoNetworking.LibName, Dependencies.ProtoBuf.LibName)
-	append_to_table(Dependencies.NanoNetworking.LibName, Dependencies.Abseil.LibName)
-	append_to_table(Dependencies.NanoNetworking.LibName, Dependencies.OpenSSL.LibName)
+	append_to_table(Dependencies.Photon.LibName, Dependencies.GameNetworkingSockets.LibName)
+	append_to_table(Dependencies.Photon.LibName, Dependencies.ProtoBuf.LibName)
+	append_to_table(Dependencies.Photon.LibName, Dependencies.Abseil.LibName)
+	append_to_table(Dependencies.Photon.LibName, Dependencies.OpenSSL.LibName)
 end
 
 -- PostBuildCommands
-append_to_table(Dependencies.NanoNetworking.PostBuildCommands, Dependencies.OpenSSL.PostBuildCommands)
+append_to_table(Dependencies.Photon.PostBuildCommands, Dependencies.OpenSSL.PostBuildCommands)
 ------------------------------------------------------------------------------
 
 return Dependencies

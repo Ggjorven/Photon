@@ -1,12 +1,12 @@
-#include "nnpch.h"
+#include "phpch.h"
 #include "Server.hpp"
 
-#include "NanoNetworking/Core/Logging.hpp"
-#include "NanoNetworking/Core/Utils.hpp"
+#include "Photon/Core/Logging.hpp"
+#include "Photon/Core/Utils.hpp"
 
 #include <unordered_map>
 
-namespace Nano::Networking
+namespace Photon
 {
 
 	static std::unordered_map<HSteamListenSocket, Server*> s_SocketToServer = {};
@@ -91,7 +91,7 @@ namespace Nano::Networking
 
 }
 
-namespace Nano::Networking
+namespace Photon
 {
 
 	////////////////////////////////////////////////////////////////////////////////////

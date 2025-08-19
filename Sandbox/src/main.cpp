@@ -1,22 +1,22 @@
 #include <iostream>
 
-#include "NanoNetworking/Core/Core.hpp"
-#include "NanoNetworking/Core/Utils.hpp"
+#include "Photon/Core/Core.hpp"
+#include "Photon/Core/Utils.hpp"
 
-#include "NanoNetworking/Client/Client.hpp"
-#include "NanoNetworking/Server/Server.hpp"
+#include "Photon/Client/Client.hpp"
+#include "Photon/Server/Server.hpp"
 
-#define NN_SERVER 1
-#define NN_CLIENT (!NN_SERVER)
+#define PH_SERVER 1
+#define PH_CLIENT (!PH_SERVER)
 
-using namespace Nano::Networking;
+using namespace Photon;
 
 void MessageReceived(void* userData, MessageType type, const std::string& message)
 {
 	std::cout << message << std::endl;
 }
 
-#if NN_CLIENT
+#if PH_CLIENT
 int main(int argc, char* argv[])
 {
 	(void)argc; (void)argv;
@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 
 	return 0;
 }
-#elif NN_SERVER
+#elif PH_SERVER
 int main(int argc, char* argv[])
 {
 	(void)argc; (void)argv;

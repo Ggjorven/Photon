@@ -1,7 +1,7 @@
-#include "nnpch.h"
+#include "phpch.h"
 #include "Utils.hpp"
 
-#include "NanoNetworking/Core/Logging.hpp"
+#include "Photon/Core/Logging.hpp"
 
 #define NANO_IMPLEMENTATION
 #include <Nano/Nano.hpp>
@@ -18,10 +18,10 @@
 	#include <netinet/in.h>
 	#include <arpa/inet.h>
 #else
-	#error NanoNetworking Utils: Utilities include not defined for this platform.
+	#error Photon Utils: Utilities include not defined for this platform.
 #endif
 
-namespace Nano::Networking::Utils
+namespace Photon::Utils
 {
 
 	////////////////////////////////////////////////////////////////////////////////////

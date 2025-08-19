@@ -35,14 +35,14 @@ project "Sandbox"
 	{
 		"src",
 
-		"%{wks.location}/NanoNetworking/src",
+		"%{wks.location}/Photon/src",
 	}
 
-	includedirs(Dependencies.NanoNetworking.IncludeDir)
+	includedirs(Dependencies.Photon.IncludeDir)
 
 	links
 	{
-		"NanoNetworking",
+		"Photon",
 	}
 
 	filter "system:windows"
@@ -54,14 +54,14 @@ project "Sandbox"
             "NOMINMAX"
         }
 
-		postbuildcommands(Dependencies.NanoNetworking.PostBuildCommands)
+		postbuildcommands(Dependencies.Photon.PostBuildCommands)
 
 	filter "system:linux"
 		systemversion "latest"
 		staticruntime "on"
 
 		-- Linux needs a backwards linking again for some reason
-		links(remove_from_table(copy_table(Dependencies.NanoNetworking.LibName), "NanoNetworking"))
+		links(remove_from_table(copy_table(Dependencies.Photon.LibName), "Photon"))
 
     filter "system:macosx"
 		systemversion(MacOSVersion)
@@ -76,19 +76,19 @@ project "Sandbox"
 		externalincludedirs(includedirs())
 
 	filter "configurations:Debug"
-		defines "NN_CONFIG_DEBUG"
+		defines "PH_CONFIG_DEBUG"
 		runtime "Debug"
 		symbols "on"
 		
 	filter "configurations:Release"
 		defines "NDEBUG"
-		defines "NN_CONFIG_RELEASE"
+		defines "PH_CONFIG_RELEASE"
 		runtime "Release"
 		optimize "on"
 
 	filter "configurations:Dist"
 		defines "NDEBUG"
-		defines "NN_CONFIG_DIST"
+		defines "PH_CONFIG_DIST"
 		runtime "Release"
 		optimize "Full"
 		linktimeoptimization "on"

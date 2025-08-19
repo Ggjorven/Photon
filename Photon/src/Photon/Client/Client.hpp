@@ -1,6 +1,6 @@
 #pragma once
 
-#include "NanoNetworking/Core/Core.hpp"
+#include "Photon/Core/Core.hpp"
 
 #include <cstdint>
 #include <string>
@@ -11,7 +11,7 @@
 #include <functional>
 #include <string_view>
 
-namespace Nano::Networking
+namespace Photon
 {
 
 	class Client;

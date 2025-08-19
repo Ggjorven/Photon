@@ -2,7 +2,7 @@ local Dependencies = local_require("../Dependencies.lua")
 local MacOSVersion = MacOSVersion or "14.5"
 local OutputDir = OutputDir or "%{cfg.buildcfg}-%{cfg.system}"
 
-project "NanoNetworking"
+project "Photon"
 	kind "StaticLib"
 	language "C++"
 	cppdialect "C++23"
@@ -16,15 +16,15 @@ project "NanoNetworking"
 	objdir ("%{wks.location}/bin-int/" .. OutputDir .. "/%{prj.name}")
 
 	-- Note: VS2022/Make only need the pchheader filename
-	pchheader "nnpch.h"
-	pchsource "src/NanoNetworking/nnpch.cpp"
+	pchheader "phpch.h"
+	pchsource "src/Photon/phpch.cpp"
 
 	files
 	{
-		"src/NanoNetworking/**.h",
-		"src/NanoNetworking/**.hpp",
-		"src/NanoNetworking/**.inl",
-		"src/NanoNetworking/**.cpp"
+		"src/Photon/**.h",
+		"src/Photon/**.hpp",
+		"src/Photon/**.inl",
+		"src/Photon/**.cpp"
 	}
 
 	defines
@@ -37,10 +37,10 @@ project "NanoNetworking"
 	includedirs
 	{
 		"src",
-		"src/NanoNetworking",
+		"src/Photon",
 	}
 
-	includedirs(Dependencies.NanoNetworking.IncludeDir)
+	includedirs(Dependencies.Photon.IncludeDir)
 
 	links(Dependencies.GameNetworkingSockets.LibName)
 
@@ -61,7 +61,7 @@ project "NanoNetworking"
 		staticruntime "on"
 
 		-- Linux needs a backwards linking again for some reason
-		links(remove_from_table(remove_from_table(copy_table(Dependencies.NanoNetworking.LibName), "NanoNetworking"), "GameNetworkingSockets"))
+		links(remove_from_table(remove_from_table(copy_table(Dependencies.Photon.LibName), "Photon"), "GameNetworkingSockets"))
 
     filter "system:macosx"
 		systemversion(MacOSVersion)
@@ -72,26 +72,26 @@ project "NanoNetworking"
 
 	filter "action:xcode*"
 		-- Note: XCode only needs the full pchheader path
-		pchheader "src/NanoNetworking/nnpch.h"
+		pchheader "src/Photon/phpch.h"
 
 		-- Note: If we don't add the header files to the externalincludedirs
 		-- we can't use <angled> brackets to include files.
 		externalincludedirs(includedirs())
 
 	filter "configurations:Debug"
-		defines "NN_CONFIG_DEBUG"
+		defines "PH_CONFIG_DEBUG"
 		runtime "Debug"
 		symbols "on"
 		
 	filter "configurations:Release"
 		defines "NDEBUG"
-		defines "NN_CONFIG_RELEASE"
+		defines "PH_CONFIG_RELEASE"
 		runtime "Release"
 		optimize "on"
 
 	filter "configurations:Dist"
 		defines "NDEBUG"
-		defines "NN_CONFIG_DIST"
+		defines "PH_CONFIG_DIST"
 		runtime "Release"
 		optimize "Full"
 		linktimeoptimization "on"

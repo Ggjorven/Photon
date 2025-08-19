@@ -1,4 +1,4 @@
-# NanoNetworking
+# Photon
 
 // TODO: Small summary
 

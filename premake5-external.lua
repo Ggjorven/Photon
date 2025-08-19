@@ -1,5 +1,5 @@
 -- Note: This is the premake5 file made to allow for using
--- NanoNetworking as a submodule/dependency without the main workspace.
+-- Photon as a submodule/dependency without the main workspace.
 
 ------------------------------------------------------------------------------
 -- Utils
@@ -39,6 +39,6 @@ group "Dependencies"
 	include "vendor/protobuf"
 	include "vendor/abseil"
 
-	include "NanoNetworking"
+	include "Photon"
 group ""
 ------------------------------------------------------------------------------

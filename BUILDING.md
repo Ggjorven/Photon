@@ -4,8 +4,8 @@
 
 1. Clone the repository:
     ```sh
-    git clone --recursive https://github.com/ggjorven/NanoNetworking.git
-    cd NanoNetworking
+    git clone --recursive https://github.com/ggjorven/Photon.git
+    cd Photon
     ```
 
 2. Navigate to the scripts folder:
@@ -32,8 +32,8 @@
 
 1. Clone the repository:
     ```sh
-    git clone --recursive https://github.com/ggjorven/NanoNetworking.git
-    cd NanoNetworking
+    git clone --recursive https://github.com/ggjorven/Photon.git
+    cd Photon
     ```
 
 2. (Optional) If you haven't already, install dependencies:
@@ -67,8 +67,8 @@
 
 1. Clone the repository:
     ```sh
-    git clone --recursive https://github.com/ggjorven/NanoNetworking.git
-    cd NanoNetworking
+    git clone --recursive https://github.com/ggjorven/Photon.git
+    cd Photon
     ```
 
 2. (Optional) If you haven't already, install dependencies (using [Homebrew](https://brew.sh/)):
@@ -98,7 +98,7 @@
 ### Windows
 - Visual Studio 17 2022:
     1. Navigate to the root of the directory
-    2. Open the NanoNetworking.sln file
+    2. Open the Photon.sln file
     3. Start building in your desired configuration
     4. Build files can be in the bin/%Config%-windows/Sandbox/ folder.
     5. (Optional) Open a terminal and run the Sandbox project:
@@ -142,7 +142,7 @@
 
 ### MacOS
 1. Navigate to the root of the directory
-2. Open the NanoNetworking.xcworkspace file
+2. Open the Photon.xcworkspace file
 3. Start building in your desired configuration
 4. Build files can be in the bin/%Config%-macosx/Sandbox/ folder.
 5. (Optional) Open a terminal and run the Sandbox project:

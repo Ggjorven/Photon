@@ -1,10 +1,10 @@
 #pragma once
 
-#include "NanoNetworking/Core/Core.hpp"
+#include "Photon/Core/Core.hpp"
 
 #include <expected>
 
-namespace Nano::Networking::Utils
+namespace Photon::Utils
 {
 
 	////////////////////////////////////////////////////////////////////////////////////
