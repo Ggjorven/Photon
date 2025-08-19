@@ -40,10 +40,7 @@ project "Sandbox"
 
 	includedirs(Dependencies.Photon.IncludeDir)
 
-	links
-	{
-		"Photon",
-	}
+	links(Dependencies.Photon.LibName)
 
 	filter "system:windows"
 		systemversion "latest"
@@ -59,9 +56,6 @@ project "Sandbox"
 	filter "system:linux"
 		systemversion "latest"
 		staticruntime "on"
-
-		-- Linux needs a backwards linking again for some reason
-		links(remove_from_table(copy_table(Dependencies.Photon.LibName), "Photon"))
 
     filter "system:macosx"
 		systemversion(MacOSVersion)
